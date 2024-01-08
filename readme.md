@@ -38,12 +38,21 @@ Make sure you have the following dependencies installed:
 - Python >= 3.10
 - Pip (Python package installer)
 - [FFmpeg](https://ffmpeg.org/download.html) #Should be installed manually
+- [OpenVoice checkpoints](https://huggingface.co/myshell-ai/OpenVoice)
 
 ## Usage
 
 1- Clone the repository:
 
+```
+git clone https://github.com/overcrash66/OpenTranslator.git
+```
+
 2- Navigate to folder:
+
+```
+cd OpenTranslator
+```
 
 3- Create a vitrual env:
 
