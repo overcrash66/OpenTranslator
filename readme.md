@@ -38,7 +38,7 @@ Make sure you have the following dependencies installed:
 - Python >= 3.10
 - Pip (Python package installer)
 - [FFmpeg](https://ffmpeg.org/download.html) #Should be installed manually
-- [OpenVoice checkpoints](https://huggingface.co/myshell-ai/OpenVoice)
+- [XTTS_V2](https://huggingface.co/coqui/XTTS-v2)
 
 ## Usage
 
@@ -121,7 +121,6 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 ## Acknowledgements
 
 Special thanks to:
-[OpenVoice](https://github.com/myshell-ai/OpenVoice)
-[GTTS](https://github.com/pndurette/gTTS)
+[XTTS_V2](https://huggingface.co/coqui/XTTS-v2)
 [whisper](https://github.com/openai/whisper)
 [ffmpeg](https://ffmpeg.org/)

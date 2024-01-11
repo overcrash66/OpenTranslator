@@ -1,9 +1,8 @@
-from tkinter import Label, Button, filedialog, StringVar, OptionMenu, messagebox, ttk, DoubleVar, Menu, Entry, Frame, simpledialog
+from tkinter import Label, Button, filedialog, StringVar, OptionMenu, messagebox, ttk, DoubleVar, Menu, Entry, Frame, simpledialog, font
 import threading
 from PIL import Image, ImageTk
 import pygame
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
-from gtts import gTTS
 import torchaudio
 import logging
 import os
@@ -26,16 +25,14 @@ from .ReplaceVideoAudio import AudioReplacerGUI
 from .audio_translator import CustomTranslator
 
 from .sentence_translator import SentenceTranslator
-import se_extractor
-from .api import BaseSpeakerTTS, ToneColorConverter
 
-ckpt_base = 'checkpoints/base_speakers/EN'
-ckpt_converter = 'checkpoints/converter'
-device = 'cpu'
-#voice cloning is not accurate!!
-tone_color_converter = ToneColorConverter(f'{ckpt_converter}/config.json', device=device)
-tone_color_converter.load_ckpt(f'{ckpt_converter}/checkpoint.pth')
-source_se = torch.load(f'{ckpt_base}/en_default_se.pth').to(device)
+from TTS.api import TTS
+
+# Get device
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Init TTS
+tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
 
 customtkinter.set_appearance_mode("System")	   # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
@@ -209,9 +206,6 @@ class TranslatorGUI:
 	def run_translation(self, output_path):
 		try:
 			input_file = self.audio_path
-			
-			# use open voice to clone original voive
-			target_se, audio_name = se_extractor.get_se(input_file, tone_color_converter, target_dir='processed', vad=True) 
 
 			# Get the duration of the input audio file
 			ffprobe_cmd = f'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "{input_file}"'
@@ -234,33 +228,27 @@ class TranslatorGUI:
 				end_time = min((chunk_idx + 1) * max_chunk_duration, input_duration)
 
 				# Use a consistent naming pattern for chunk files
-				chunk_output_path = f"{output_path}_chunk{chunk_idx + 1}.mp3"
+				chunk_output_path = f"{output_path}_chunk{chunk_idx + 1}.wav"
 
 				# Split the audio file into a chunk
 				self.split_audio_chunk(self.audio_path, chunk_output_path, start_time, end_time)
 				try:
 					translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
 																 self.target_language_dropdown.get(),
-																 chunk_idx, output_path,source_se,target_se,tone_color_converter)
+																 chunk_idx, output_path,tts)											 
 				except Exception as e:
 					print(f"{e}")
 					self.progress_bar.stop()
 					self.label_status.configure(text="An Error occurred!",font=("Arial", 16, "bold"),text_color="red")
 					
 				chunk_files.append(chunk_output_path)
-
+				
 				# Update translated text in text widget	
-				if self.target_language_dropdown.get() == 'ar':#still have an issue of reverse line order for arabic text
-					self.text_translated.tag_config("right", justify=customtkinter.RIGHT)
-					translation_result = ' '.join(reversed(translation_result.split()))
-					translation_result = translation_result.replace('.', '').replace(',', '')
-
-				#if self.target_language_dropdown.get() != 'ar':
 				self.text_translated.configure(state='normal')
 				self.text_translated.insert('end', f"{translation_result}\n\n")
 				self.text_translated.configure(state='disabled')
-				
-				Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.mp3"
+
+				Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
 				Translation_chunk_files.append(Translation_chunk_output_path)
 				
 			# Merge individual chunk files into the final output file
@@ -273,31 +261,14 @@ class TranslatorGUI:
 			# Cleanup: Delete individual chunk files
 			self.delete_chunk_files(chunk_files)
 			self.delete_chunk_files(Translation_chunk_files)
-
+			
 			self.progress_bar.stop()
 
 			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")
-			self.delete_files_in_folder('processed')
 			
 		except Exception as e:
 			logging.error(f"Error during translation: {e}")
 			raise
-	
-	def delete_files_in_folder(self, folder_path):
-		try:
-			# List all files and subfolders in the folder
-			for root, dirs, files in os.walk(folder_path):
-				for file in files:
-					file_path = os.path.join(root, file)
-					os.remove(file_path)
-				
-				for subfolder in dirs:
-					subfolder_path = os.path.join(root, subfolder)
-					shutil.rmtree(subfolder_path)
-
-			print(f"All files and subfolders in {folder_path} have been deleted.")
-		except Exception as e:
-			print(f"An error occurred: {e}")		
 
 	# Function to split audio into a chunk using ffmpeg
 	def split_audio_chunk(self, input_path, output_path, start_time, end_time):
@@ -317,7 +288,7 @@ class TranslatorGUI:
 		for input_file in input_files:
 			try:
 				# Load the chunk audio
-				chunk_audio = AudioSegment.from_file(input_file, format="mp3")
+				chunk_audio = AudioSegment.from_file(input_file, format="wav")
 
 				# Append the chunk audio to the merged audio
 				merged_audio += chunk_audio
@@ -328,7 +299,7 @@ class TranslatorGUI:
 
 		# Export the merged audio to the final output file
 		try:
-			merged_audio.export(output_file, format="mp3")
+			merged_audio.export(output_file, format="wav")
 		except Exception as e:
 			logging.error(f"Error exporting merged audio: {e}")
 
@@ -349,34 +320,12 @@ class TranslatorGUI:
 		if translation_text:
 			output_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
 			if output_path:
-				if self.target_language_dropdown.get() == 'ar':
-					text = translation_text
-						
-					with open(output_path+'_temp', "w", encoding="utf-8") as file:
-						file.write(text)
-					print(f"Temp Translation saved to: {output_path}+'_temp'")		
-				
-					with open(output_path+'_temp', 'r', encoding="utf-8") as file2:
-						lines = file2.readlines()
-
-					reversed_lines = []
-					for line in lines:
-						words = line.split()
-						reversed_words = ' '.join(reversed(words))
-						reversed_lines.append(reversed_words)
-					reversed_content = '\n'.join(reversed_lines)
-					
-					with open(output_path, "w", encoding="utf-8") as file3:
-						file3.write(reversed_content)
+				try:
+					with open(output_path, "w", encoding="utf-8") as file:
+						file.write(translation_text)
 					print(f"Translation saved to: {output_path}")
-					os.remove(output_path+'_temp')
-				else:
-					try:
-						with open(output_path, "w", encoding="utf-8") as file:
-							file.write(translation_text)
-						print(f"Translation saved to: {output_path}")
-					except Exception as e:
-						print(f"Error saving translation to file: {e}")
+				except Exception as e:
+					print(f"Error saving translation to file: {e}")
 
 			else:
 				print("Save operation cancelled.")
