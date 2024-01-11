@@ -255,7 +255,7 @@ class TranslatorGUI:
 			final_output_path = f"{output_path}"
 			self.merge_audio_files(Translation_chunk_files, final_output_path)
 
-			# Play the final merged audio file
+			# Play the final merged audio file, do not work need to convert from wav to mp3 or change play file format
 			self.translator_instance.play_audio(final_output_path)
 
 			# Cleanup: Delete individual chunk files
