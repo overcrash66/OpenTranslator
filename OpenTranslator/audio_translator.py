@@ -18,10 +18,14 @@ from .sentence_translator import SentenceTranslator
 
 from TTS.api import TTS
 
+# Get device
+device = "cuda" if torch.cuda.is_available() else "cpu"
+
 class CustomTranslator:
     def __init__(self):
         self.processor = None
         self.model = None
+        self.tts = None
         self.target_language = StringVar()
         self.target_language.set("en")  # Default target language
 
@@ -31,11 +35,8 @@ class CustomTranslator:
             self.processor = WhisperProcessor.from_pretrained("openai/whisper-large-v2")
 
         if self.model is None:
-            self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v2")
-
-        # Move the model to GPU if available
-        if torch.cuda.is_available():
-            self.model.to('cuda')
+            self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v2").to(device)
+            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
 
     def unload_model(self):
         # Unload the model if it has been loaded
@@ -45,15 +46,18 @@ class CustomTranslator:
 
         if self.model is not None:
             # Move the model back to CPU before deleting
-            if torch.cuda.is_available():
-                self.model.to('cpu')
+            #if torch.cuda.is_available():
+            #    self.model.to('cpu')
+            #    self.tts.to('cpu')
             del self.model
             self.model = None
+            del self.tts
+            self.tts = None
         
-    def process_audio_chunk(self, input_path, target_language, chunk_idx, output_path, tts):
+    def process_audio_chunk(self, input_path, target_language, chunk_idx, output_path):
         try:
             self.load_model()
-            
+
             # Load input audio file using librosa
             input_waveform, input_sampling_rate = librosa.load(input_path, sr=None, mono=True)
 
@@ -109,12 +113,12 @@ class CustomTranslator:
                 translated_text = translator(transcription)
                 
                 # Generate final audio output from translated text
-                self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path, tts)
+                self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)
 
                 logging.info(f"Processing successful. Translated text: {translated_text}")
                 return translated_text
             else:
-                self.generate_audio(transcription, Translation_chunk_output_path, target_language, input_path, tts)
+                self.generate_audio(transcription, Translation_chunk_output_path, target_language, input_path)
                 
                 logging.info(f"Processing successful. Translated text: {transcription}")
                 return transcription
@@ -131,9 +135,9 @@ class CustomTranslator:
             # Ensure model is unloaded and memory is cleared even if an exception occurs
             self.unload_model()    
         
-    def generate_audio(self, text, output_path, target_language, input_path, tts):   
+    def generate_audio(self, text, output_path, target_language, input_path):   
         # Text to speech to a file
-        tts.tts_to_file(text=text, speaker_wav=input_path, language=target_language, file_path=output_path)
+        self.tts.tts_to_file(text=text, speaker_wav=input_path, language=target_language, file_path=output_path)
 
     def play_audio(self, audio_path): # disabled for now
         pygame.mixer.init()

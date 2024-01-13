@@ -1,7 +1,5 @@
-# AudioFileTranslator_S2ST/main.py
-
 from tkinter import Tk
-from AudioFileTranslator_S2ST.translator_gui import TranslatorGUI
+from OpenTranslator.translator_gui import TranslatorGUI
 import customtkinter
 
 def run_gui():

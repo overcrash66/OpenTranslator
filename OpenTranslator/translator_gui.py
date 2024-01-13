@@ -26,14 +26,6 @@ from .audio_translator import CustomTranslator
 
 from .sentence_translator import SentenceTranslator
 
-from TTS.api import TTS
-
-# Get device
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
-# Init TTS
-tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
-
 customtkinter.set_appearance_mode("System")	   # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
@@ -235,7 +227,7 @@ class TranslatorGUI:
 				try:
 					translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
 																 self.target_language_dropdown.get(),
-																 chunk_idx, output_path,tts)											 
+																 chunk_idx, output_path)											 
 				except Exception as e:
 					print(f"{e}")
 					self.progress_bar.stop()
@@ -252,11 +244,14 @@ class TranslatorGUI:
 				Translation_chunk_files.append(Translation_chunk_output_path)
 				
 			# Merge individual chunk files into the final output file
-			final_output_path = f"{output_path}"
+			final_output_path = f"{output_path}-temp.wav"
 			self.merge_audio_files(Translation_chunk_files, final_output_path)
+			
+			subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
+			os.remove(final_output_path)
 
-			# Play the final merged audio file, do not work need to convert from wav to mp3 or change play file format
-			self.translator_instance.play_audio(final_output_path)
+			# Play the final merged audio file
+			self.translator_instance.play_audio(output_path)
 
 			# Cleanup: Delete individual chunk files
 			self.delete_chunk_files(chunk_files)
