@@ -61,7 +61,7 @@ py -3.10 -m venv venv
 ```
 
 ```
-venv\Scripts\activate
+
 ```
 
 4- Install the required Python packages using:
@@ -84,6 +84,7 @@ python OpenTranslator.py
 - Extract audio from Video
 - YouTube Downloader
 - Replace Audio in Video
+- Video Text Adder
 - Exit
 
 2- Help Menu:
