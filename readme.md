@@ -61,7 +61,7 @@ py -3.10 -m venv venv
 ```
 
 ```
-
+venv\Scripts\activate
 ```
 
 4- Install the required Python packages using:
