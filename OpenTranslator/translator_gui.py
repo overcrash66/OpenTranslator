@@ -1,3 +1,4 @@
+import tkinter as tk
 from tkinter import Label, Button, filedialog, StringVar, OptionMenu, messagebox, ttk, DoubleVar, Menu, Entry, Frame, simpledialog, font
 import threading
 from PIL import Image, ImageTk
@@ -20,6 +21,8 @@ import httpx
 from CTkMenuBar import *
 import re
 import shutil
+#from bidi.algorithm import get_display  # To handle RTL text
+
 from .youtube_downloader import YouTubeDownloader
 from .ReplaceVideoAudio import AudioReplacerGUI
 from .VideoTextAdder import VideoTextAdder
@@ -90,19 +93,21 @@ class TranslatorGUI:
 		
 		# Create a frame for widgets using grid
 		grid_frame = Frame(master, bg="#222121")
-		grid_frame.pack(side="right", padx=2)
+		grid_frame.pack(side="right", padx=4)
 		
 		self.label_translated_text = customtkinter.CTkLabel(grid_frame, text="Translated Text:", font=("Arial", 16, "bold"), text_color="white")
 		self.label_translated_text.grid(row=5, column=0, columnspan=2, pady=10)
 		
 		self.clear_button = customtkinter.CTkButton(grid_frame, text="Clear", command=self.clear_text)
-		self.clear_button.grid(row=6, column=1, columnspan=2, pady=10)
+		self.clear_button.grid(row=6, column=0, columnspan=1, pady=10)
 		
-		self.text_translated = customtkinter.CTkTextbox(grid_frame, height=200, width=400, wrap = 'word')
-		self.text_translated.grid(row=7, column=0, columnspan=2, pady=10)
-		
+		#self.text_translated = customtkinter.CTkTextbox(grid_frame, height=200, width=400, wrap = 'word')
+		#self.text_translated.grid(row=7, column=0, columnspan=2, pady=10)
+		self.text_translated = tk.Text(grid_frame, height=18, width=45, wrap = 'word')
+		self.text_translated.grid(row=7, column=0, columnspan=1, pady=10)
+
 		self.save_button = customtkinter.CTkButton(grid_frame, text="Save Text Translation", command=self.save_translation)
-		self.save_button.grid(row=9, column=0, columnspan=2, pady=10)
+		self.save_button.grid(row=9, column=0, columnspan=1, pady=10)
 		
 		self.progress_bar = customtkinter.CTkProgressBar(grid_frame, variable=DoubleVar(), mode='indeterminate')
 		self.progress_bar.grid(row=10, column=0, columnspan=2, pady=10)
@@ -238,6 +243,9 @@ class TranslatorGUI:
 				chunk_files.append(chunk_output_path)
 				
 				# Update translated text in text widget	
+				#if self.target_language_dropdown.get() == 'ar':
+				#	translation_result = get_display(translation_result)
+				
 				self.text_translated.configure(state='normal')
 				self.text_translated.insert('end', f"{translation_result}\n\n")
 				self.text_translated.configure(state='disabled')
