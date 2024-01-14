@@ -22,6 +22,7 @@ import re
 import shutil
 from .youtube_downloader import YouTubeDownloader
 from .ReplaceVideoAudio import AudioReplacerGUI
+from .VideoTextAdder import VideoTextAdder
 from .audio_translator import CustomTranslator
 
 from .sentence_translator import SentenceTranslator
@@ -40,6 +41,7 @@ class TranslatorGUI:
 		filedropdown.add_option(option="Extract audio from Video", command=self.extract_audio)
 		filedropdown.add_option(option="Youtube Downloader", command=YouTubeDownloader)
 		filedropdown.add_option(option="Replace Audio in Video", command=AudioReplacerGUI)
+		filedropdown.add_option(option="Video Text Adder", command=VideoTextAdder)
 		filedropdown.add_option(option="Exit", command=master.destroy)
 
 		helpdropdown = CustomDropdownMenu(widget=self.help, width=50)
