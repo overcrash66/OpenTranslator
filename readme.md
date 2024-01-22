@@ -39,6 +39,7 @@ Make sure you have the following dependencies installed:
 - Pip (Python package installer)
 - [FFmpeg](https://ffmpeg.org/download.html) #Should be installed manually
 - [XTTS_V2](https://huggingface.co/coqui/XTTS-v2)
+- [whisper-large-v3](https://huggingface.co/openai/whisper-large-v3)
 
 ## Usage
 
