@@ -29,10 +29,10 @@ class CustomTranslator:
     def load_model(self):
         # Load the model if it hasn't been loaded
         if self.processor is None:
-            self.processor = WhisperProcessor.from_pretrained("openai/whisper-large-v2")
+            self.processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3")
 
         if self.model is None:
-            self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v2")
+            self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v3")
             self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2")
 
     def unload_model(self):
