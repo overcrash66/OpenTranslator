@@ -18,9 +18,6 @@ from .sentence_translator import SentenceTranslator
 
 from TTS.api import TTS
 
-# Get device
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
 class CustomTranslator:
     def __init__(self):
         self.processor = None
@@ -35,8 +32,8 @@ class CustomTranslator:
             self.processor = WhisperProcessor.from_pretrained("openai/whisper-large-v2")
 
         if self.model is None:
-            self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v2").to(device)
-            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
+            self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v2")
+            self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2")
 
     def unload_model(self):
         # Unload the model if it has been loaded
@@ -45,10 +42,6 @@ class CustomTranslator:
             self.processor = None
 
         if self.model is not None:
-            # Move the model back to CPU before deleting
-            #if torch.cuda.is_available():
-            #    self.model.to('cpu')
-            #    self.tts.to('cpu')
             del self.model
             self.model = None
             del self.tts
