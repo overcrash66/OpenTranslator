@@ -9,3 +9,4 @@ librosa
 customtkinter
 httpx
 CTkMenuBar
+sentencepiece

@@ -15,7 +15,8 @@ import re
 from tkinter import StringVar
 import pygame
 from .sentence_translator import SentenceTranslator
-
+from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
+import sentencepiece as spm
 from TTS.api import TTS
 
 class CustomTranslator:
@@ -23,6 +24,7 @@ class CustomTranslator:
         self.processor = None
         self.model = None
         self.tts = None
+        tt = None
         self.target_language = StringVar()
         self.target_language.set("en")  # Default target language
 
@@ -46,8 +48,11 @@ class CustomTranslator:
             self.model = None
             del self.tts
             self.tts = None
+            del tt
+            tt = None
+
         
-    def process_audio_chunk(self, input_path, target_language, chunk_idx, output_path):
+    def process_audio_chunk(self, input_path, target_language, chunk_idx, output_path, Target_Text_Translation_Option):
         try:
             self.load_model()
 
@@ -101,7 +106,8 @@ class CustomTranslator:
             Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
             
             # Use SpeechRecognizer for translation (modify as needed)
-            if target_language != "en":
+            if target_language != "en" and Target_Text_Translation_Option == 'Online':
+                print("Online text Translation started ..")
                 translator = SentenceTranslator(src="en", dst=target_language)
                 translated_text = translator(transcription)
                 
@@ -110,7 +116,40 @@ class CustomTranslator:
 
                 logging.info(f"Processing successful. Translated text: {translated_text}")
                 return translated_text
-            else:
+            if Target_Text_Translation_Option == 'Local':
+                print("Local text Translation started ..")
+                tt = MBartForConditionalGeneration.from_pretrained("SnypzZz/Llama2-13b-Language-translate")
+                tokenizer = MBart50TokenizerFast.from_pretrained("SnypzZz/Llama2-13b-Language-translate", src_lang="en_XX")
+                model_inputs = tokenizer(transcription, return_tensors="pt")
+                
+                # Map target languages to model language codes
+                language_mapping = {
+                "en": "en_XX",
+                "es": "es_XX",
+                "fr": "fr_XX",
+                "de": "de_DE",
+                "ja": "ja_XX",
+                "ko": "ko_KR",
+                "tr": "tr_TR",
+                "ar": "ar_AR",
+                "ru": "ru_RU",
+                "he": "he_IL",
+                "hi": "hi_IN",
+                "it": "it_IT",
+                "pt": "pt_PT",
+                }
+
+                # Set the target language based on the mapping
+                model_Target_language = language_mapping.get(target_language, "en_XX")       
+                generated_tokens = tt.generate(**model_inputs,forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
+                translated_text = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+                translated_text = ", ".join(translated_text)
+                # Generate final audio output from translated text
+                self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)
+                logging.info(f"Processing successful. Translated text: {translated_text}")
+                return translated_text
+
+            else:    
                 self.generate_audio(transcription, Translation_chunk_output_path, target_language, input_path)
                 
                 logging.info(f"Processing successful. Translated text: {transcription}")

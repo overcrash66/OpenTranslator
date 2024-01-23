@@ -21,8 +21,7 @@ import httpx
 from CTkMenuBar import *
 import re
 import shutil
-#from bidi.algorithm import get_display  # To handle RTL text
-
+import webbrowser
 from .youtube_downloader import YouTubeDownloader
 from .ReplaceVideoAudio import AudioReplacerGUI
 from .VideoTextAdder import VideoTextAdder
@@ -45,6 +44,7 @@ class TranslatorGUI:
 		filedropdown.add_option(option="Youtube Downloader", command=YouTubeDownloader)
 		filedropdown.add_option(option="Replace Audio in Video", command=AudioReplacerGUI)
 		filedropdown.add_option(option="Video Text Adder", command=VideoTextAdder)
+		filedropdown.add_option(option="PyTranscriber", command=self.PyTranscriber)
 		filedropdown.add_option(option="Exit", command=master.destroy)
 
 		helpdropdown = CustomDropdownMenu(widget=self.help, width=50)
@@ -62,6 +62,16 @@ class TranslatorGUI:
 		pack_frame = Frame(master, bg="#222121")
 		pack_frame.pack(side="left", padx=2)
 		
+		self.label_target_TextTranslationOption = customtkinter.CTkLabel(pack_frame, text="Select text Translation Method:", font=("Arial", 12, "bold"),text_color="green")
+		self.label_target_TextTranslationOption.pack(pady=5)
+
+		TextTranslationOption = ["Local", "Online"]
+		
+		self.stringvarTextTranslationOption = customtkinter.StringVar()
+		self.target_TextTranslationOption_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarTextTranslationOption,values=TextTranslationOption)
+		self.target_TextTranslationOption_dropdown.pack(pady=5)
+		self.target_TextTranslationOption_dropdown.set(TextTranslationOption[0])
+
 		self.audio_path = ""
 		
 		self.label_input = customtkinter.CTkLabel(pack_frame, text="Select Audio File:", font=("Arial", 12, "bold"),text_color="green")
@@ -84,7 +94,7 @@ class TranslatorGUI:
 		self.stringvarlanguage = customtkinter.StringVar()
 		self.target_language_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarlanguage,values=languages)
 		self.target_language_dropdown.pack(pady=5)
-		self.target_language_dropdown.set(languages[0])
+		self.target_language_dropdown.set(languages[7])
 
 		self.translate_button = customtkinter.CTkButton(pack_frame, text="Translate", command=self.translate)
 		self.translate_button.pack(pady=5)
@@ -102,8 +112,6 @@ class TranslatorGUI:
 		self.clear_button = customtkinter.CTkButton(grid_frame, text="Clear", command=self.clear_text)
 		self.clear_button.grid(row=6, column=0, columnspan=1, pady=10)
 		
-		#self.text_translated = customtkinter.CTkTextbox(grid_frame, height=200, width=400, wrap = 'word')
-		#self.text_translated.grid(row=7, column=0, columnspan=2, pady=10)
 		self.text_translated = tk.Text(grid_frame, height=18, width=45, wrap = 'word')
 		self.text_translated.grid(row=7, column=0, columnspan=1, pady=10)
 
@@ -148,7 +156,17 @@ class TranslatorGUI:
 			
 			print(f"Conversion successful: {output_audio}")
 			messagebox.showinfo("Info", f"Conversion successful: {output_audio}")
-		
+	def PyTranscriber(self):
+		pytranscriber_path = r'C:\Program Files (x86)\pyTranscriber\pyTranscriber.exe'
+		# Check if pyTranscriber exists
+		if os.path.exists(pytranscriber_path):
+			subprocess.run([pytranscriber_path])
+		else:
+			# Show message box to install pyTranscriber
+			messagebox.showinfo("PyTranscriber Not Found",
+			"Please install pyTranscriber from: https://pytranscriber.github.io/download/")	
+			webbrowser.open_new(r'https://pytranscriber.github.io/download/')
+
 	def Convert_Audio_Files(self):
 		def is_mp3(file_path):
 			try:
@@ -236,7 +254,7 @@ class TranslatorGUI:
 				try:
 					translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
 																 self.target_language_dropdown.get(),
-																 chunk_idx, output_path)											 
+																 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
 				except Exception as e:
 					print(f"{e}")
 					self.progress_bar.stop()

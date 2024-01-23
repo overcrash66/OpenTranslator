@@ -1,4 +1,4 @@
-# Open Translator - Speech To Speech and Speech to text Translator - Online mode (No api keys are needed )
+# Open Translator - Speech To Speech and Speech to text Translator - Online mode (No api keys are needed ) Or Local only mode
 
 Open Translator, Speech To Speech Translator with voice cloning and other cool features.
 
@@ -17,6 +17,7 @@ Open Translator, Speech To Speech Translator with voice cloning and other cool f
 - YouTube Downloader
 - Replace Audio in Video
 - Video Text Adder
+- PyTranscriber (shortcut)
 - Exit
 
 2- Help Menu:
@@ -100,3 +101,4 @@ This project is licensed under the [MIT License](https://opensource.org/licenses
 Special thanks to:
 [XTTS_V2](https://huggingface.co/coqui/XTTS-v2)
 [whisper](https://github.com/openai/whisper)
+[mBART-50](https://huggingface.co/SnypzZz/Llama2-13b-Language-translate)
