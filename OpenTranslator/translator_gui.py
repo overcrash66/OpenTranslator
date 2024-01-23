@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import Label, Button, filedialog, StringVar, OptionMenu, messagebox, ttk, DoubleVar, Menu, Entry, Frame, simpledialog, font
 import threading
 from PIL import Image, ImageTk
-import pygame
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 import torchaudio
 import logging

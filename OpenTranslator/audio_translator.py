@@ -13,11 +13,12 @@ import httpx
 from CTkMenuBar import *
 import re
 from tkinter import StringVar
-import pygame
+import sounddevice as sd
 from .sentence_translator import SentenceTranslator
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 import sentencepiece as spm
 from TTS.api import TTS
+import threading
 
 class CustomTranslator:
     def __init__(self):
@@ -169,15 +170,14 @@ class CustomTranslator:
         # Text to speech to a file
         self.tts.tts_to_file(text=text, speaker_wav=input_path, language=target_language, file_path=output_path)
 
-    def play_audio(self, audio_path): # disabled for now
-        pygame.mixer.init()
-        pygame.mixer.music.load(audio_path)
-        pygame.mixer.music.play()
-
+    def play_audio(self, audio_path):
+        self.audio_data, self.sample_rate = librosa.load(audio_path, sr=None)
+        sd.play(self.audio_data, self.sample_rate)
+ 
     def stop_audio(self):
-        if not pygame.mixer.get_init():
-            pygame.mixer.init()
-        try:    
-            pygame.mixer.music.stop()
-        except:
-            pass
+        try:
+            sd.stop()
+        except Exception as e:
+            print(str(e))
+            pass    
+
