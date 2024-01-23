@@ -24,7 +24,6 @@ class CustomTranslator:
         self.processor = None
         self.model = None
         self.tts = None
-        tt = None
         self.target_language = StringVar()
         self.target_language.set("en")  # Default target language
 
@@ -48,10 +47,7 @@ class CustomTranslator:
             self.model = None
             del self.tts
             self.tts = None
-            del tt
-            tt = None
-
-        
+ 
     def process_audio_chunk(self, input_path, target_language, chunk_idx, output_path, Target_Text_Translation_Option):
         try:
             self.load_model()
@@ -148,6 +144,8 @@ class CustomTranslator:
                 self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)
                 logging.info(f"Processing successful. Translated text: {translated_text}")
                 return translated_text
+                del tt
+                del tokenizer
 
             else:    
                 self.generate_audio(transcription, Translation_chunk_output_path, target_language, input_path)
