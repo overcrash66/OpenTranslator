@@ -16,7 +16,7 @@ class VideoTextAdder:
                 'text_color': 'red',
                 'font_size': 20,
                 'font_style': 'bold',
-                'default_text': 'Voice Translated using Open Translator'
+                'default_text': 'Voice translated and generated using AI'
             }
 
     def apply_text_to_video(self):
