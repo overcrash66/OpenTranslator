@@ -20,12 +20,18 @@ class CustomTranslator:
     def __init__(self):
         self.target_language = StringVar()
         self.target_language.set("ar")  # Default target language
+        self.processor = None
+        self.model = None
+        self.tts = None
+        
+    def load_models(self):    
         self.processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3")
         self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v3").to(device)
         self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
  
     def process_audio_chunk(self, input_path, target_language, chunk_idx, output_path, Target_Text_Translation_Option):
         try:
+            self.load_models()    
             # Load input audio file using librosa
             input_waveform, input_sampling_rate = librosa.load(input_path, sr=None, mono=True)
 

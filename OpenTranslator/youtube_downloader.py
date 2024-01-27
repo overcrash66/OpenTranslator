@@ -42,6 +42,7 @@ class YouTubeDownloader:
 
         except Exception as e:
             self.status_label.configure(text=f"Error: {str(e)}")
+    
     def __init__(self):
         new_window = customtkinter.CTk()
         new_window.title("YouTube Downloader")
