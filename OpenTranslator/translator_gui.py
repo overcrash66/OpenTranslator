@@ -244,6 +244,17 @@ class TranslatorGUI:
 			# Use a consistent naming pattern for chunk files
 			chunk_output_path = f"{output_path}_chunk{chunk_idx + 1}.wav"
 
+			# Update progress variable
+			current_progress = (chunk_idx + 1) / num_chunks * 100
+			current_progress = current_progress - 20
+			current_progress = "{:.0f}".format(current_progress)
+
+			# Update label text
+			self.label_status.configure(
+				text=f"Translation in progress... {current_progress}%",
+				font=("Arial", 16, "bold"), text_color="red"
+			)
+
 			# Split the audio file into a chunk
 			self.split_audio_chunk(self.audio_path, chunk_output_path, start_time, end_time)
 			try:
@@ -277,7 +288,8 @@ class TranslatorGUI:
 		# Cleanup: Delete individual chunk files
 		self.delete_chunk_files(chunk_files)
 		self.delete_chunk_files(Translation_chunk_files)
-		
+		chunk_files = []  # List to store individual chunk files
+		Translation_chunk_files = []
 		self.progress_bar.stop()
 
 		self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")

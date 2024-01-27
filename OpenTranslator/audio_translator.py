@@ -58,6 +58,8 @@ class CustomTranslator:
             # Decode token ids to text
             transcription = self.processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
             
+            del input_waveform, input_sampling_rate
+
             #fix a bug: Text Validation check if we have duplicate successive words
             words = transcription.split()
             cleaned_words = [words[0]]
