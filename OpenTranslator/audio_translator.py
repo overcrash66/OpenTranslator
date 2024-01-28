@@ -83,7 +83,7 @@ class CustomTranslator:
             cleaned_transcription = '.'.join(cleaned_sentences)
 
             transcription = cleaned_transcription
-            
+            print('Speech recognition and translate to english text: '+str(transcription))
             Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
             
             # Use SpeechRecognizer for translation (modify as needed)

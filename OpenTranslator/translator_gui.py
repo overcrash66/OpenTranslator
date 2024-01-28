@@ -1,9 +1,5 @@
 import tkinter as tk
 from tkinter import Label, Button, filedialog, StringVar, OptionMenu, messagebox, ttk, DoubleVar, Menu, Entry, Frame, simpledialog, font
-import threading
-
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
-
 import logging
 import os
 import requests
@@ -16,14 +12,9 @@ import time
 import customtkinter
 from CTkMenuBar import *
 import re
-
+import threading
 import webbrowser
-from .youtube_downloader import YouTubeDownloader
-from .ReplaceVideoAudio import AudioReplacerGUI
-from .VideoTextAdder import VideoTextAdder
 from .audio_translator import CustomTranslator
-
-from .sentence_translator import SentenceTranslator
 
 customtkinter.set_appearance_mode("System")	   # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
@@ -37,9 +28,9 @@ class TranslatorGUI:
 		filedropdown = CustomDropdownMenu(widget=self.file, width=100)
 		filedropdown.add_option(option="Convert Audio file to MP3", command=self.Convert_Audio_Files)
 		filedropdown.add_option(option="Extract audio from Video", command=self.extract_audio)
-		filedropdown.add_option(option="Youtube Downloader", command=YouTubeDownloader)
-		filedropdown.add_option(option="Replace Audio in Video", command=AudioReplacerGUI)
-		filedropdown.add_option(option="Video Text Adder", command=VideoTextAdder)
+		filedropdown.add_option(option="Youtube Downloader", command=self.YouTubeDownloader)
+		filedropdown.add_option(option="Replace Audio in Video", command=self.AudioReplacerGUI)
+		filedropdown.add_option(option="Video Text Adder", command=self.VideoTextAdder)
 		filedropdown.add_option(option="PyTranscriber", command=self.PyTranscriber)
 		filedropdown.add_option(option="Exit", command=master.destroy)
 
@@ -152,6 +143,37 @@ class TranslatorGUI:
 			
 			print(f"Conversion successful: {output_audio}")
 			messagebox.showinfo("Info", f"Conversion successful: {output_audio}")
+	
+	def VideoTextAdder(self):	
+		def runVideoTextAdder():
+			VideoTextAdder_subprocess = subprocess.run(["python", VideoTextAdder_path], check=True)
+
+		VideoTextAdder_path = r'OpenTranslator\VideoTextAdder.py'
+		if os.path.exists(VideoTextAdder_path):
+			VideoTextAdder_thread = threading.Thread(target=runVideoTextAdder)
+			VideoTextAdder_thread.start()
+
+	def AudioReplacerGUI(self):
+		def runAudioReplacerGUI():
+			AudioReplacerGUI_subprocess = subprocess.run(["python", AudioReplacerGUI_path], check=True)
+
+		AudioReplacerGUI_path = r'OpenTranslator\ReplaceVideoAudio.py'
+		if os.path.exists(AudioReplacerGUI_path):
+			AudioReplacerGUI_thread = threading.Thread(target=runAudioReplacerGUI)
+			AudioReplacerGUI_thread.start()		
+
+	def YouTubeDownloader(self):
+		def runYt():
+			YouTubeDownloader_subprocess = subprocess.run(["python", YouTubeDownloader_path], check=True)
+
+		YouTubeDownloader_path = r'OpenTranslator\youtube_downloader.py'
+		if os.path.exists(YouTubeDownloader_path):
+			YouTubeDownloader_thread = threading.Thread(target=runYt)
+			YouTubeDownloader_thread.start()
+			
+		else:
+			messagebox.showinfo("YouTubeDownloader_path Not Found")	
+
 	def PyTranscriber(self):
 		pytranscriber_path = r'C:\Program Files (x86)\pyTranscriber\pyTranscriber.exe'
 		# Check if pyTranscriber exists
@@ -246,7 +268,7 @@ class TranslatorGUI:
 
 			# Update progress variable
 			current_progress = (chunk_idx + 1) / num_chunks * 100
-			current_progress = current_progress - 20
+			current_progress = current_progress - 30
 			current_progress = "{:.0f}".format(current_progress)
 
 			# Update label text
