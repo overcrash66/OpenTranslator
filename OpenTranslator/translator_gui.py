@@ -126,31 +126,45 @@ class TranslatorGUI:
 				translation_thread.start()
 				self.progress_bar.start()
 				self.label_status.configure(text="Translation in progress...",font=("Arial", 16, "bold"),text_color="red")	 
-
-	#todo: need to improve performance. Gui freeze when converting file			
+				
 	def extract_audio(self):
 		input_video = filedialog.askopenfilename(filetypes=[("Video Files", "*.mp4")])
+
 		if input_video != '':
 			input_video_file = input_video.split("/")[-1]
-			input_video_file = str(input_video_file).replace('.mp4','')
+			input_video_file = str(input_video_file).replace('.mp4', '')
 			output_audio = f"{input_video_file}.mp3"
-			
+
 			command = [
 				'ffmpeg',
 				'-i', input_video,
-				'-vn',	# Disable video recording
-				'-ac', '2',	 # Set the number of audio channels to 2
-				'-ar', '44100',	 # Set the audio sample rate to 44100 Hz
-				'-ab', '192k',	# Set the audio bitrate to 192 kbps
-				'-f', 'mp3',  # Set the output format to mp3
+				'-vn',
+				'-ac', '2',
+				'-ar', '44100',
+				'-ab', '192k',
+				'-f', 'mp3',
 				output_audio
 			]
 
-			# Run the command
-			subprocess.run(command)
-			
-			print(f"Conversion successful: {output_audio}")
-			messagebox.showinfo("Info", f"Conversion successful: {output_audio}")
+			# Run the command in a separate thread
+			threading.Thread(target=self.run_ffmpeg_command, args=(command, output_audio)).start()
+
+	def run_ffmpeg_command(self, command, output_audio):
+		try:
+			# Use subprocess.Popen instead of subprocess.run
+			process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			output, error = process.communicate()
+
+			if process.returncode == 0:
+				print(f"Conversion successful: {output_audio}")
+				messagebox.showinfo("Info", f"Conversion successful: {output_audio}")
+			else:
+				print(f"Error during conversion: {error.decode('utf-8')}")
+				messagebox.showerror("Error", f"Error during conversion: {error.decode('utf-8')}")
+
+		except Exception as e:
+			print(f"An error occurred: {str(e)}")
+			messagebox.showerror("Error", f"An error occurred: {str(e)}")
 	
 	def VideoTextAdder(self):	
 		def runVideoTextAdder():
@@ -219,7 +233,8 @@ class TranslatorGUI:
 
 			if not is_mp3(input_file):
 				print(f"The input file is not a valid MP3. Converting to MP3...")
-				convert_to_mp3(input_file, output_file)
+				#convert_to_mp3(input_file, output_file)
+				threading.Thread(target=convert_to_mp3, args=(input_file, output_file)).start()
 			else:
 				print("The input file is already an MP3.")
 				messagebox.showinfo("Error", "The input file is already an MP3.")
