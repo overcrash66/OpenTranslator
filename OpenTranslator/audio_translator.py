@@ -123,8 +123,8 @@ class CustomTranslator:
                 "it": "it_IT",
                 "pt": "pt_PT",
                 "cn": "zh_CN",
-                "uk": "uk_UA",
                 "cs": "cs_CZ",
+                "nl": "nl_XX",
                 }
 
                 # Set the target language based on the mapping
