@@ -127,6 +127,7 @@ class TranslatorGUI:
 				self.progress_bar.start()
 				self.label_status.configure(text="Translation in progress...",font=("Arial", 16, "bold"),text_color="red")	 
 
+	#todo: need to improve performance. Gui freeze when converting file			
 	def extract_audio(self):
 		input_video = filedialog.askopenfilename(filetypes=[("Video Files", "*.mp4")])
 		if input_video != '':
@@ -276,8 +277,8 @@ class TranslatorGUI:
 
 			# Update progress variable
 			current_progress = (chunk_idx + 1) / num_chunks * 100
-			if current_progress >= 10:
-				current_progress = current_progress - 10
+			if current_progress >= 2:
+				current_progress = current_progress - 1
 			current_progress = "{:.0f}".format(current_progress)
 
 			# Update label text
