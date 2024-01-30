@@ -197,16 +197,18 @@ class TranslatorGUI:
 			messagebox.showinfo("YouTubeDownloader_path Not Found")	
 
 	def PyTranscriber(self):
-		pytranscriber_path = r'C:\Program Files (x86)\pyTranscriber\pyTranscriber.exe'
-		# Check if pyTranscriber exists
-		if os.path.exists(pytranscriber_path):
-			subprocess.run([pytranscriber_path])
-		else:
-			# Show message box to install pyTranscriber
-			messagebox.showinfo("PyTranscriber Not Found",
-			"Please install pyTranscriber from: https://pytranscriber.github.io/download/")	
-			webbrowser.open_new(r'https://pytranscriber.github.io/download/')
-
+		def RunPyTranscriber():
+			pytranscriber_path = r'C:\Program Files (x86)\pyTranscriber\pyTranscriber.exe'
+			# Check if pyTranscriber exists
+			if os.path.exists(pytranscriber_path):
+				subprocess.run([pytranscriber_path])
+			else:
+				# Show message box to install pyTranscriber
+				messagebox.showinfo("PyTranscriber Not Found",
+				"Please install pyTranscriber from: https://pytranscriber.github.io/download/")	
+				webbrowser.open_new(r'https://pytranscriber.github.io/download/')
+		threading.Thread(target=RunPyTranscriber).start()
+				
 	def Convert_Audio_Files(self):
 		def is_mp3(file_path):
 			try:
