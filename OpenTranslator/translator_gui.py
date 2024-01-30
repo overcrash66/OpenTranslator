@@ -246,6 +246,7 @@ class TranslatorGUI:
 		self.text_translated.configure(state='normal')
 		self.text_translated.delete("1.0", "end")
 		self.text_translated.configure(state='disabled')
+		self.label_file_title.configure(text=f"")
 	
 	def run_translation(self, output_path):
 		input_file = self.audio_path
