@@ -6,6 +6,7 @@ import subprocess
 import re
 import os
 import threading
+import unicodedata
 
 class YouTubeDownloader:
     def __init__(self):
@@ -33,7 +34,10 @@ class YouTubeDownloader:
         new_window.mainloop()
 
     def sanitize_filename(self, title):
-        return re.sub(r'\W+', '_', title)
+        title = re.sub(r'\W+', '_', title)
+        title = unicodedata.normalize('NFKD', title).encode('ASCII', 'ignore').decode('utf-8')
+        return title
+
 
     def start_download(self):
         url = self.url_entry.get()

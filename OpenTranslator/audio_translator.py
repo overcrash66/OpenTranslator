@@ -122,6 +122,9 @@ class CustomTranslator:
                 "hi": "hi_IN",
                 "it": "it_IT",
                 "pt": "pt_PT",
+                "cn": "zh_CN",
+                "uk": "uk_UA",
+                "cs": "cs_CZ",
                 }
 
                 # Set the target language based on the mapping
@@ -153,7 +156,7 @@ class CustomTranslator:
             # Log errors
             logging.error(f"Error processing audio: {e}")
             raise  # Re-raise the exception  
-        
+       
     def generate_audio(self, text, output_path, target_language, input_path):   
         print("Generate audio")
         # Text to speech to a file
