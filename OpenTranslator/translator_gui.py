@@ -73,7 +73,7 @@ class TranslatorGUI:
 
 		self.label_target_language = customtkinter.CTkLabel(pack_frame, text="Select Target Language:", font=("Arial", 12, "bold"),text_color="green")
 		self.label_target_language.pack(pady=5)
-		
+
 		languages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'pl', 'tr', 'ru', 'nl', 'cs', 'ar', 'zh-cn', 'hu', 'ko', 'ja', 'hi']
 		
 		self.translator_instance = CustomTranslator()
@@ -81,7 +81,7 @@ class TranslatorGUI:
 		self.stringvarlanguage = customtkinter.StringVar()
 		self.target_language_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarlanguage,values=languages)
 		self.target_language_dropdown.pack(pady=5)
-		self.target_language_dropdown.set(languages[7])
+		self.target_language_dropdown.set(languages[11])
 
 		self.translate_button = customtkinter.CTkButton(pack_frame, text="Translate", command=self.translate)
 		self.translate_button.pack(pady=5)
