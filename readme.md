@@ -4,7 +4,7 @@ Open Translator, Speech To Speech Translator with voice cloning and other cool f
 
 ## Features
 
-- 16 Multi-Language Supported:
+- 16 Languages Supported:
 
    - The translator supports various target languages, including English, Spanish, French, German, Japanese, Korean, Turkish, Arabic, Russian, Hebrew, Hindi, Italian, Portuguese, Chinese, Czech and Ukrainian.
 
