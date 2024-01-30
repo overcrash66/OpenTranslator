@@ -85,6 +85,10 @@ class TranslatorGUI:
 
 		self.translate_button = customtkinter.CTkButton(pack_frame, text="Translate", command=self.translate)
 		self.translate_button.pack(pady=5)
+		
+		self.switch_var = customtkinter.StringVar(value="on")
+		self.switch_1 = customtkinter.CTkSwitch(master=pack_frame, text="Play translated audio file", command=self.switch_event,variable=self.switch_var, onvalue="on", offvalue="off")
+		self.switch_1.pack(padx=20, pady=10)
 
 		self.stop_button = customtkinter.CTkButton(pack_frame, text="Stop Playing Translated File",command=self.stop_playing)
 		self.stop_button.pack(pady=5)
@@ -110,7 +114,10 @@ class TranslatorGUI:
 
 		self.label_status = customtkinter.CTkLabel(grid_frame, text="")
 		self.label_status.grid(row=11, column=0, columnspan=2, pady=5)
-
+	
+	def switch_event(self):
+		print("switch toggled, current value:", self.switch_var.get())		
+	
 	def translate(self):
 		if self.audio_path:
 			output_path = filedialog.asksaveasfilename(defaultextension=".mp3", filetypes=[("MP3 Files", "*.mp3")])
@@ -268,7 +275,8 @@ class TranslatorGUI:
 
 			# Update progress variable
 			current_progress = (chunk_idx + 1) / num_chunks * 100
-			current_progress = current_progress - 30
+			if current_progress >= 10:
+				current_progress = current_progress - 10
 			current_progress = "{:.0f}".format(current_progress)
 
 			# Update label text
@@ -304,8 +312,9 @@ class TranslatorGUI:
 		subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
 		os.remove(final_output_path)
 
-		# Play the final merged audio file
-		self.translator_instance.play_audio(output_path)
+		if self.switch_var.get() == 'on':
+			# Play the final merged audio file
+			self.translator_instance.play_audio(output_path)
 
 		# Cleanup: Delete individual chunk files
 		self.delete_chunk_files(chunk_files)
