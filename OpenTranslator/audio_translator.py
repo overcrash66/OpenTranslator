@@ -120,7 +120,7 @@ class CustomTranslator:
                 "tr": "tr_TR",
                 "ar": "ar_AR",
                 "ru": "ru_RU",
-                "he": "he_IL",
+                "hu": "he_IL",
                 "hi": "hi_IN",
                 "it": "it_IT",
                 "pt": "pt_XX",
