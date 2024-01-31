@@ -127,6 +127,7 @@ class CustomTranslator:
                 "zh": "zh_CN",
                 "cs": "cs_CZ",
                 "nl": "nl_XX",
+                "pl": "pl_PL",
                 }
 
                 # Set the target language based on the mapping
