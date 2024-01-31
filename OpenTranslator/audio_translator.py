@@ -13,6 +13,8 @@ from .sentence_translator import SentenceTranslator
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 import sentencepiece as spm
 from TTS.api import TTS
+import cutlet
+import MeCab
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -121,7 +123,7 @@ class CustomTranslator:
                 "he": "he_IL",
                 "hi": "hi_IN",
                 "it": "it_IT",
-                "pt": "pt_PT",
+                "pt": "pt_XX",
                 "zh": "zh_CN",
                 "cs": "cs_CZ",
                 "nl": "nl_XX",
