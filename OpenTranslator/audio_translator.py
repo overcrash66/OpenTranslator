@@ -122,7 +122,7 @@ class CustomTranslator:
                 "hi": "hi_IN",
                 "it": "it_IT",
                 "pt": "pt_PT",
-                "cn": "zh_CN",
+                "zh": "zh_CN",
                 "cs": "cs_CZ",
                 "nl": "nl_XX",
                 }
