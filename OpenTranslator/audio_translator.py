@@ -1,20 +1,14 @@
 from transformers import WhisperProcessor, WhisperForConditionalGeneration
 import torchaudio
 import logging
-import os
-from pydub import AudioSegment
 import librosa
 import torch
-import customtkinter
 from CTkMenuBar import *
 from tkinter import StringVar
 import sounddevice as sd
 from .sentence_translator import SentenceTranslator
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
-import sentencepiece as spm
 from TTS.api import TTS
-import cutlet
-import MeCab
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 

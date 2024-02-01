@@ -1,17 +1,12 @@
 import tkinter as tk
-from tkinter import Label, Button, filedialog, StringVar, OptionMenu, messagebox, ttk, DoubleVar, Menu, Entry, Frame, simpledialog, font
+from tkinter import filedialog, messagebox, DoubleVar, Frame
 import logging
 import os
-import requests
-import math
 from pydub import AudioSegment
-from pytube import YouTube
 from pydub.utils import mediainfo
 import subprocess
-import time
 import customtkinter
 from CTkMenuBar import *
-import re
 import threading
 import webbrowser
 from .audio_translator import CustomTranslator
