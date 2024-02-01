@@ -273,39 +273,90 @@ class TranslatorGUI:
 		ffprobe_cmd = f'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "{input_file}"'
 		input_duration = float(subprocess.check_output(ffprobe_cmd, shell=True))
 		
-		# Set the maximum duration for each chunk (30 seconds in this case)
-		max_chunk_duration = 30
+		if input_duration > 30 :
+			# Set the maximum duration for each chunk (30 seconds in this case)
+			max_chunk_duration = 30
 
-		# Calculate the number of chunks required
-		num_chunks = int(input_duration / max_chunk_duration)
-		print("num_chunks: "+str(num_chunks))
-		chunk_files = []  # List to store individual chunk files
-		Translation_chunk_files = []
-		
-		# Split the audio file into chunks and process each chunk
-		for chunk_idx in range(num_chunks):
+			# Calculate the number of chunks required
+			num_chunks = int(input_duration / max_chunk_duration)
+			#if num_chunks > 0:
+
+			print("num_chunks: "+str(num_chunks))
+			chunk_files = []  # List to store individual chunk files
+			Translation_chunk_files = []
 			
-			# Calculate start and end times for each chunk
-			start_time = chunk_idx * max_chunk_duration
-			end_time = min((chunk_idx + 1) * max_chunk_duration, input_duration)
+			# Split the audio file into chunks and process each chunk
+			for chunk_idx in range(num_chunks):
+				
+				# Calculate start and end times for each chunk
+				start_time = chunk_idx * max_chunk_duration
+				end_time = min((chunk_idx + 1) * max_chunk_duration, input_duration)
 
-			# Use a consistent naming pattern for chunk files
-			chunk_output_path = f"{output_path}_chunk{chunk_idx + 1}.wav"
+				# Use a consistent naming pattern for chunk files
+				chunk_output_path = f"{output_path}_chunk{chunk_idx + 1}.wav"
 
-			# Update progress variable
-			current_progress = (chunk_idx + 1) / num_chunks * 100
-			if current_progress >= 2:
-				current_progress = current_progress - 1
-			current_progress = "{:.0f}".format(current_progress)
+				# Update progress variable
+				current_progress = (chunk_idx + 1) / num_chunks * 100
+				if current_progress >= 2:
+					current_progress = current_progress - 1
+				current_progress = "{:.0f}".format(current_progress)
 
+				# Update label text
+				self.label_status.configure(
+					text=f"Translation in progress... {current_progress}%",
+					font=("Arial", 16, "bold"), text_color="red"
+				)
+
+				# Split the audio file into a chunk
+				self.split_audio_chunk(self.audio_path, chunk_output_path, start_time, end_time)
+				try:
+					translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
+																 self.target_language_dropdown.get(),
+																 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
+				except Exception as e:
+					print(f"{e}")
+					self.progress_bar.stop()
+					self.label_status.configure(text="An Error occurred!",font=("Arial", 16, "bold"),text_color="red")
+				
+				chunk_files.append(chunk_output_path)
+				
+				self.text_translated.configure(state='normal')
+				self.text_translated.insert('end', f"{translation_result}\n\n")
+				self.text_translated.configure(state='disabled')
+
+				Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
+				Translation_chunk_files.append(Translation_chunk_output_path)
+				
+			# Merge individual chunk files into the final output file
+			final_output_path = f"{output_path}-temp.wav"
+			self.merge_audio_files(Translation_chunk_files, final_output_path)
+			
+			subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
+			os.remove(final_output_path)
+
+			if self.switch_var.get() == 'on':
+				# Play the final merged audio file
+				self.translator_instance.play_audio(output_path)
+
+			# Cleanup: Delete individual chunk files
+			self.delete_chunk_files(chunk_files)
+			self.delete_chunk_files(Translation_chunk_files)
+			chunk_files = []  # List to store individual chunk files
+			Translation_chunk_files = []
+			self.progress_bar.stop()
+
+			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")
+		else:
+			print("Audio File less then 30 sec !")	
 			# Update label text
 			self.label_status.configure(
-				text=f"Translation in progress... {current_progress}%",
+				text=f"Translation in progress...",
 				font=("Arial", 16, "bold"), text_color="red"
 			)
 
-			# Split the audio file into a chunk
-			self.split_audio_chunk(self.audio_path, chunk_output_path, start_time, end_time)
+			# Use a consistent naming pattern for chunk files
+			chunk_output_path = f"{input_file}"
+			chunk_idx = 0
 			try:
 				translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
 															 self.target_language_dropdown.get(),
@@ -314,36 +365,29 @@ class TranslatorGUI:
 				print(f"{e}")
 				self.progress_bar.stop()
 				self.label_status.configure(text="An Error occurred!",font=("Arial", 16, "bold"),text_color="red")
-				
+			
+			chunk_files = []  # List to store individual chunk files
+			Translation_chunk_files = []		
 			chunk_files.append(chunk_output_path)
 			
 			self.text_translated.configure(state='normal')
 			self.text_translated.insert('end', f"{translation_result}\n\n")
 			self.text_translated.configure(state='disabled')
 
-			Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
+			Translation_chunk_output_path = f"{output_path}_Translation_chunk1.wav"
 			Translation_chunk_files.append(Translation_chunk_output_path)
 			
-		# Merge individual chunk files into the final output file
-		final_output_path = f"{output_path}-temp.wav"
-		self.merge_audio_files(Translation_chunk_files, final_output_path)
-		
-		subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
-		os.remove(final_output_path)
+			subprocess.run(['ffmpeg', '-i', Translation_chunk_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
+			os.remove(Translation_chunk_output_path)
 
-		if self.switch_var.get() == 'on':
-			# Play the final merged audio file
-			self.translator_instance.play_audio(output_path)
+			if self.switch_var.get() == 'on':
+				# Play the final merged audio file
+				self.translator_instance.play_audio(output_path)
 
-		# Cleanup: Delete individual chunk files
-		self.delete_chunk_files(chunk_files)
-		self.delete_chunk_files(Translation_chunk_files)
-		chunk_files = []  # List to store individual chunk files
-		Translation_chunk_files = []
-		self.progress_bar.stop()
+			self.progress_bar.stop()
 
-		self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")
-
+			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")
+				
 	# Function to split audio into a chunk using ffmpeg
 	def split_audio_chunk(self, input_path, output_path, start_time, end_time):
 		ffmpeg_cmd = f'ffmpeg -i "{input_path}" -ss {start_time} -to {end_time} -c copy "{output_path}"'
