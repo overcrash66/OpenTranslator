@@ -9,6 +9,7 @@ import sounddevice as sd
 from .sentence_translator import SentenceTranslator
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 from TTS.api import TTS
+import time
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -16,9 +17,9 @@ class CustomTranslator:
     def __init__(self):
         self.target_language = StringVar()
         self.target_language.set("ar")  # Default target language
-        self.processor = None
-        self.model = None
-        self.tts = None
+        #self.processor = None
+        #self.model = None
+        #self.tts = None
         
     def load_models(self):    
         self.processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3")
@@ -27,7 +28,10 @@ class CustomTranslator:
  
     def process_audio_chunk(self, input_path, target_language, chunk_idx, output_path, Target_Text_Translation_Option):
         try:
+            #to speed up translation an use less GPU or memory:
+            #we could add an online mode like this 'https://github.com/raryelcostasouza/pyTranscriber/blob/master/autosub/__init__-0.4.0.py''
             self.load_models()    
+            start_time = time.time()
             # Load input audio file using librosa
             input_waveform, input_sampling_rate = librosa.load(input_path, sr=None, mono=True)
 
@@ -55,6 +59,10 @@ class CustomTranslator:
             transcription = self.processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
             
             del input_waveform, input_sampling_rate
+
+            end_time = time.time()
+            execution_time = (end_time - start_time) / 60
+            print(f"Transcription Execution time: {execution_time:.2f} minutes")
 
             #fix a bug: Text Validation check if we have duplicate successive words
             words = transcription.split()
@@ -85,6 +93,7 @@ class CustomTranslator:
             # Use SpeechRecognizer for translation (modify as needed)
             if target_language != "en" and Target_Text_Translation_Option == 'Online':
                 print("Online text Translation started ..")
+                start_time = time.time()
                 translator = SentenceTranslator(src="en", dst=target_language)
                 translated_text = translator(transcription)
                 
@@ -92,10 +101,14 @@ class CustomTranslator:
                 self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)
 
                 logging.info(f"Processing successful. Translated text: {translated_text}")
+                end_time = time.time()
+                execution_time = (end_time - start_time) / 60
+                print(f"Online Text Translation Execution time: {execution_time:.2f} minutes")
                 return translated_text
             
             if Target_Text_Translation_Option == 'Local':
                 print("Local text Translation started ..")
+                start_time = time.time()
                 tt = MBartForConditionalGeneration.from_pretrained("SnypzZz/Llama2-13b-Language-translate").to(device)
                 tokenizer = MBart50TokenizerFast.from_pretrained("SnypzZz/Llama2-13b-Language-translate", src_lang="en_XX", device=device)
                 
@@ -139,6 +152,11 @@ class CustomTranslator:
                 self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)
                 
                 logging.info(f"Processing successful. Translated text: {translated_text}")
+                
+                end_time = time.time()
+                execution_time = (end_time - start_time) / 60
+                print(f"Local Translation Execution time: {execution_time:.2f} minutes")
+
                 return translated_text
 
             else:    
@@ -157,7 +175,11 @@ class CustomTranslator:
     def generate_audio(self, text, output_path, target_language, input_path):   
         print("Generate audio")
         # Text to speech to a file
+        start_time = time.time()
         self.tts.tts_to_file(text=text, speaker_wav=input_path, language=target_language, file_path=output_path)
+        end_time = time.time()
+        execution_time = (end_time - start_time) / 60
+        print(f"Generate_audio Execution time: {execution_time:.2f} minutes")
 
     def play_audio(self, audio_path):
         self.audio_data, self.sample_rate = librosa.load(audio_path, sr=None)
