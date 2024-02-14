@@ -10,7 +10,7 @@ Open Translator, Speech To Speech Translator with voice cloning and other cool f
 
 ## Options
 
-1- File Menu:
+- File Menu available options:
 
 - Convert Audio file to MP3
 - Extract audio from Video
@@ -19,26 +19,6 @@ Open Translator, Speech To Speech Translator with voice cloning and other cool f
 - Video Text Adder
 - PyTranscriber (shortcut)
 - Exit
-
-2- Help Menu:
-
-- About
-
-3- Select Audio File:
-
-- Browse to choose the input audio file.
-
-4- Select Target Language:
-
-- Choose the target language from the dropdown menu.
-
-5- Translate:
-
-- Click the "Translate" button to start the translation process.
-
-6- Stop Playing Translated File:
-
-- Click the "Stop Playing Translated File" button to stop audio playback.
 
 ## Requirements
 
@@ -81,7 +61,7 @@ pip install torch==2.1.2+cu118 torchaudio==2.1.2+cu118 --index-url https://downl
 pip install -r requirements.txt
 ```
 
-OR use CPU:
+OR use CPU only:
 
 ```bash
 pip install -r requirements.txt
@@ -111,3 +91,5 @@ Special thanks to:
 [XTTS_V2](https://huggingface.co/coqui/XTTS-v2)
 [whisper](https://github.com/openai/whisper)
 [mBART-50](https://huggingface.co/SnypzZz/Llama2-13b-Language-translate)
+[autosub](https://github.com/agermanidis/autosub)
+[gTTS](https://github.com/pndurette/gTTS)

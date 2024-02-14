@@ -13,3 +13,5 @@ sentencepiece
 cutlet
 mecab
 unidic-lite
+google-api-python-client
+gtts

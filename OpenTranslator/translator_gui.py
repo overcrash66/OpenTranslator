@@ -46,13 +46,19 @@ class TranslatorGUI:
 		
 		self.label_target_TextTranslationOption = customtkinter.CTkLabel(pack_frame, text="Select text Translation Method:", font=("Arial", 12, "bold"),text_color="green")
 		self.label_target_TextTranslationOption.pack(pady=5)
-
-		TextTranslationOption = ["Local", "Online"]
-		
+		TextTranslationOption = ["Local", "Online"]	
 		self.stringvarTextTranslationOption = customtkinter.StringVar()
 		self.target_TextTranslationOption_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarTextTranslationOption,values=TextTranslationOption)
 		self.target_TextTranslationOption_dropdown.pack(pady=5)
 		self.target_TextTranslationOption_dropdown.set(TextTranslationOption[0])
+
+		self.label_source_AudioFileLang = customtkinter.CTkLabel(pack_frame, text="For online Translation only:\n Select Source Audio file Language:", font=("Arial", 12, "bold"),text_color="green")
+		self.label_source_AudioFileLang.pack(pady=5)
+		Src_lang = ['en', 'es', 'fr', 'de', 'it', 'pt', 'pl', 'tr', 'ru', 'nl', 'cs', 'ar', 'zh', 'iw', 'ko', 'ja', 'hi']
+		self.stringvarsource_AudioFileLang = customtkinter.StringVar()
+		self.source_AudioFileLang_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarsource_AudioFileLang,values=Src_lang)
+		self.source_AudioFileLang_dropdown.pack(pady=5)
+		self.source_AudioFileLang_dropdown.set(Src_lang[13])
 
 		self.audio_path = ""
 		
@@ -263,7 +269,7 @@ class TranslatorGUI:
 	
 	def run_translation(self, output_path):
 		input_file = self.audio_path
-
+		
 		# Get the duration of the input audio file
 		ffprobe_cmd = f'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "{input_file}"'
 		input_duration = float(subprocess.check_output(ffprobe_cmd, shell=True))
@@ -304,9 +310,10 @@ class TranslatorGUI:
 
 				# Split the audio file into a chunk
 				self.split_audio_chunk(self.audio_path, chunk_output_path, start_time, end_time)
+
 				try:
 					translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
-																 self.target_language_dropdown.get(),
+																 self.target_language_dropdown.get(),self.source_AudioFileLang_dropdown.get(),
 																 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
 				except Exception as e:
 					print(f"{e}")
@@ -321,11 +328,15 @@ class TranslatorGUI:
 
 				Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
 				Translation_chunk_files.append(Translation_chunk_output_path)
-				
+			
+
 			# Merge individual chunk files into the final output file
 			final_output_path = f"{output_path}-temp.wav"
-			self.merge_audio_files(Translation_chunk_files, final_output_path)
-			
+			if self.target_TextTranslationOption_dropdown.get() == 'Local':
+				self.merge_audio_files(Translation_chunk_files, final_output_path)
+			if self.target_TextTranslationOption_dropdown.get() == 'Online':
+				self.merge_online_audio_files(Translation_chunk_files, final_output_path)
+
 			subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
 			os.remove(final_output_path)
 
@@ -341,8 +352,9 @@ class TranslatorGUI:
 			self.progress_bar.stop()
 
 			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")
-		else:
-			print("Audio File less then 30 sec !")	
+			
+		if input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Local':
+			print("Audio File less or equal 30 sec !")	
 			# Update label text
 			self.label_status.configure(
 				text=f"Translation in progress...",
@@ -354,7 +366,7 @@ class TranslatorGUI:
 			chunk_idx = 0
 			try:
 				translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
-															 self.target_language_dropdown.get(),
+															 self.target_language_dropdown.get(),self.source_AudioFileLang_dropdown.get(),
 															 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
 			except Exception as e:
 				print(f"{e}")
@@ -381,8 +393,14 @@ class TranslatorGUI:
 
 			self.progress_bar.stop()
 
-			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")
-				
+			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")	
+		
+		else:
+			self.progress_bar.stop()
+			print('For online translation: you need to use an audio file longer then 30 sec !')	
+			messagebox.showinfo("Info", f"For online translation: you need to use an audio file longer then 30 sec !")
+			self.label_status.configure(text="",font=("Arial", 16, "bold"),text_color="black")
+
 	# Function to split audio into a chunk using ffmpeg
 	def split_audio_chunk(self, input_path, output_path, start_time, end_time):
 		ffmpeg_cmd = f'ffmpeg -i "{input_path}" -ss {start_time} -to {end_time} -c copy "{output_path}"'
@@ -413,6 +431,27 @@ class TranslatorGUI:
 		# Export the merged audio to the final output file
 		try:
 			merged_audio.export(output_file, format="wav")
+		except Exception as e:
+			logging.error(f"Error exporting merged audio: {e}")
+
+	def merge_online_audio_files(self, input_files, output_file):
+		merged_audio = AudioSegment.silent(duration=0)
+		# print("Merge started")
+		for input_file in input_files:
+			try:
+				# Load the chunk audio
+				chunk_audio = AudioSegment.from_file(input_file, format="mp3")
+
+				# Append the chunk audio to the merged audio
+				merged_audio += chunk_audio
+			except FileNotFoundError as e:
+				logging.warning(f"Error merging audio file {input_file}: {e}")
+			except Exception as e:
+				logging.error(f"Error merging audio file {input_file}: {e}")
+
+		# Export the merged audio to the final output file
+		try:
+			merged_audio.export(output_file, format="mp3")
 		except Exception as e:
 			logging.error(f"Error exporting merged audio: {e}")
 
