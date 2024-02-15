@@ -54,7 +54,7 @@ class TranslatorGUI:
 		self.target_TextTranslationOption_dropdown.pack(pady=5)
 		self.target_TextTranslationOption_dropdown.set(TextTranslationOption[0])
 
-		self.label_source_AudioFileLang = customtkinter.CTkLabel(pack_frame, text="For online Translation only:\n Select Source Audio file Language:", font=("Arial", 12, "bold"),text_color="green")
+		self.label_source_AudioFileLang = customtkinter.CTkLabel(pack_frame, text="For online or Hybrid Translation:\n Select Source Audio file Language:", font=("Arial", 12, "bold"),text_color="green")
 		self.label_source_AudioFileLang.pack(pady=5)
 		Src_lang = ['en', 'es', 'fr', 'de', 'it', 'pt', 'pl', 'tr', 'ru', 'nl', 'cs', 'ar', 'zh', 'iw', 'ko', 'ja', 'hi']
 		self.stringvarsource_AudioFileLang = customtkinter.StringVar()
