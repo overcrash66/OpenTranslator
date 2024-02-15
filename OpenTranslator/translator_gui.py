@@ -397,7 +397,7 @@ class TranslatorGUI:
 
 			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")	
 		
-		else:
+		if input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Online':
 			#self.progress_bar.stop()
 			print('For online translation: you need to use an audio file longer then 30 sec !')	
 			messagebox.showinfo("Info", f"For online translation: you need to use an audio file longer then 30 sec !")
