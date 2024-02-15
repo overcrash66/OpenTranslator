@@ -48,7 +48,7 @@ class TranslatorGUI:
 		
 		self.label_target_TextTranslationOption = customtkinter.CTkLabel(pack_frame, text="Select Translation Method:", font=("Arial", 12, "bold"),text_color="green")
 		self.label_target_TextTranslationOption.pack(pady=5)
-		TextTranslationOption = ["Local", "Online"]	
+		TextTranslationOption = ["Local", "Online", "Hybrid"]	
 		self.stringvarTextTranslationOption = customtkinter.StringVar()
 		self.target_TextTranslationOption_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarTextTranslationOption,values=TextTranslationOption)
 		self.target_TextTranslationOption_dropdown.pack(pady=5)

@@ -29,32 +29,35 @@ class CustomTranslator:
     def load_models(self):    
         self.processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3")
         self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v3").to(device)
-        self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
+        #self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
  
     def process_audio_chunk(self, input_path, target_language,src_lang, chunk_idx, output_path, Target_Text_Translation_Option):
         try:
-            if Target_Text_Translation_Option == 'Online':
+            if Target_Text_Translation_Option == 'Online' or Target_Text_Translation_Option == 'Hybrid':
                 print('Starting Online translation!')
                 src_language = src_lang
                 transcripts = Ctr_Autosub.generate_subtitles(source_path = input_path,output = output_path,src_language = src_language)
                 
                 print('transcripts: '+str(transcripts))
                 translator = SentenceTranslator(src=src_language, dst=target_language)
-                
+                #ERROR:root:Error processing audio: sequence item 10: expected str instance, NoneType found
                 translated=[]
                 for byte_string in transcripts:
-                    byte_string = str(byte_string).replace('None', '')
-                    translated_text = translator(byte_string)
-                    translated.append(translated_text)
+                    #byte_string = str(byte_string).replace('None', '')
+                     if byte_string is not None:
+                        translated_text = translator(byte_string)
+                        translated.append(translated_text)
                     
                 translated_text = ' '.join(translated)
                 print('translated_text: '+str(translated_text))
                 
                 Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
                 print(str(Translation_chunk_output_path))
-                #self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)   
-                tts = gTTS(translated_text, lang=target_language, slow=False)
-                tts.save(Translation_chunk_output_path)
+                if Target_Text_Translation_Option == 'Hybrid':
+                    self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)   
+                if Target_Text_Translation_Option == 'Online':
+                    tts = gTTS(translated_text, lang=target_language, slow=False)
+                    tts.save(Translation_chunk_output_path)
                 return translated_text
 
             if Target_Text_Translation_Option == 'Local':
@@ -180,6 +183,7 @@ class CustomTranslator:
         print("Generate audio")
         # Text to speech to a file
         start_time = time.time()
+        self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
         self.tts.tts_to_file(text=text, speaker_wav=input_path, language=target_language, file_path=output_path)
         end_time = time.time()
         execution_time = (end_time - start_time) / 60
