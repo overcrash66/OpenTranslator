@@ -119,61 +119,67 @@ class CustomTranslator:
 
                 transcription = cleaned_transcription
                 print('Speech recognition and translate to english text: '+str(transcription))
+                
                 Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
                 
-                #Local text Translation
-                print("Local text Translation started ..")
-                start_time = time.time()
-                tt = MBartForConditionalGeneration.from_pretrained("SnypzZz/Llama2-13b-Language-translate").to(device)
-                tokenizer = MBart50TokenizerFast.from_pretrained("SnypzZz/Llama2-13b-Language-translate", src_lang="en_XX", device=device)
-                
-                # Tokenize and convert to PyTorch tensor
-                inputs = tokenizer(transcription, return_tensors="pt")
-                input_ids = inputs["input_ids"].to(device)
+                #if target language is English skip text translation
+                if target_language != 'en':
+                    #Local text Translation
+                    print("Local text Translation started ..")
+                    start_time = time.time()
+                    tt = MBartForConditionalGeneration.from_pretrained("SnypzZz/Llama2-13b-Language-translate").to(device)
+                    tokenizer = MBart50TokenizerFast.from_pretrained("SnypzZz/Llama2-13b-Language-translate", src_lang="en_XX", device=device)
+                    
+                    # Tokenize and convert to PyTorch tensor
+                    inputs = tokenizer(transcription, return_tensors="pt")
+                    input_ids = inputs["input_ids"].to(device)
 
-                # Map target languages to model language codes
-                language_mapping = {
-                "en": "en_XX",
-                "es": "es_XX",
-                "fr": "fr_XX",
-                "de": "de_DE",
-                "ja": "ja_XX",
-                "ko": "ko_KR",
-                "tr": "tr_TR",
-                "ar": "ar_AR",
-                "ru": "ru_RU",
-                "hu": "he_IL",
-                "hi": "hi_IN",
-                "it": "it_IT",
-                "pt": "pt_XX",
-                "zh": "zh_CN",
-                "cs": "cs_CZ",
-                "nl": "nl_XX",
-                "pl": "pl_PL",
-                }
+                    # Map target languages to model language codes
+                    language_mapping = {
+                    "en": "en_XX",
+                    "es": "es_XX",
+                    "fr": "fr_XX",
+                    "de": "de_DE",
+                    "ja": "ja_XX",
+                    "ko": "ko_KR",
+                    "tr": "tr_TR",
+                    "ar": "ar_AR",
+                    "ru": "ru_RU",
+                    "hu": "he_IL",
+                    "hi": "hi_IN",
+                    "it": "it_IT",
+                    "pt": "pt_XX",
+                    "zh": "zh_CN",
+                    "cs": "cs_CZ",
+                    "nl": "nl_XX",
+                    "pl": "pl_PL",
+                    }
 
-                # Set the target language based on the mapping
-                model_Target_language = language_mapping.get(target_language, "en_XX")       
-                
-                # Generate tokens on the GPU
-                #generated_tokens = tt.generate(**model_inputs,forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
-                generated_tokens = tt.generate(input_ids=input_ids, forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
-                
-                # Decode and join the translated text
-                translated_text = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
-                translated_text = ", ".join(translated_text)
+                    # Set the target language based on the mapping
+                    model_Target_language = language_mapping.get(target_language, "en_XX")       
+                    
+                    # Generate tokens on the GPU
+                    #generated_tokens = tt.generate(**model_inputs,forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
+                    generated_tokens = tt.generate(input_ids=input_ids, forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
+                    
+                    # Decode and join the translated text
+                    translated_text = tokenizer.batch_decode(generated_tokens, skip_special_tokens=True)
+                    translated_text = ", ".join(translated_text)
 
-                logging.info(f"Processing successful. Translated text: {translated_text}")
-                end_time = time.time()
-                execution_time = (end_time - start_time) / 60
-                print(f"Local Translation Execution time: {execution_time:.2f} minutes")
-
+                    logging.info(f"Processing successful. Translated text: {translated_text}")
+                    end_time = time.time()
+                    execution_time = (end_time - start_time) / 60
+                    print(f"Local Translation Execution time: {execution_time:.2f} minutes")
+                if target_language == 'en':
+                    translated_text = transcription
+                            
                 # Generate final audio output from translated text
                 self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)    
                 
                 # Log success
                 logging.info(f"Translation successful for {input_path}. Translated text: {transcription}")
                 return translated_text
+        
         except Exception as e:
             # Log errors
             logging.error(f"Error processing audio: {e}")
