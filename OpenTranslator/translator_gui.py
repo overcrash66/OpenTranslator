@@ -334,7 +334,7 @@ class TranslatorGUI:
 
 			# Merge individual chunk files into the final output file
 			final_output_path = f"{output_path}-temp.wav"
-			if self.target_TextTranslationOption_dropdown.get() == 'Local':
+			if self.target_TextTranslationOption_dropdown.get() == 'Local' or self.target_TextTranslationOption_dropdown.get() == 'Hybrid':
 				self.merge_audio_files(Translation_chunk_files, final_output_path)
 			if self.target_TextTranslationOption_dropdown.get() == 'Online':
 				self.merge_online_audio_files(Translation_chunk_files, final_output_path)
@@ -397,7 +397,7 @@ class TranslatorGUI:
 
 			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")	
 		
-		if input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Online':
+		if input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Online' or input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Hybrid':
 			#self.progress_bar.stop()
 			print('For online translation: you need to use an audio file longer then 30 sec !')	
 			messagebox.showinfo("Info", f"For online translation: you need to use an audio file longer then 30 sec !")
