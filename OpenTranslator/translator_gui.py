@@ -10,6 +10,8 @@ from CTkMenuBar import *
 import threading
 import webbrowser
 from .audio_translator import CustomTranslator
+import ctypes
+ctypes.windll.user32.SetProcessDPIAware()
 
 customtkinter.set_appearance_mode("System")	   # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
@@ -32,19 +34,19 @@ class TranslatorGUI:
 		helpdropdown = CustomDropdownMenu(widget=self.help, width=50)
 		helpdropdown.add_option(option="About", command=self.show_about)
 		master.title("Open Translator")
-		master.geometry("600x640")
-		master.minsize(600,640)
-		master.maxsize(740,640)
+		master.geometry("740x680")
+		master.minsize(740,680)
+		master.maxsize(740,680)
 		master.attributes('-fullscreen', False)
 
-		self.label = customtkinter.CTkLabel(master=master, text="Open Translator", font=("Arial", 28, "bold"),text_color="white")
+		self.label = customtkinter.CTkLabel(master=master, text="Open Translator", font=("Comic Sans MS", 30, "bold"),text_color="red")
 		self.label.pack(side="top", pady=10)
 
 		# Create a frame for widgets using pack
 		pack_frame = Frame(master, bg="#222121")
-		pack_frame.pack(side="left", padx=2)
+		pack_frame.pack(side="left", padx=20 ,pady=20)
 		
-		self.label_target_TextTranslationOption = customtkinter.CTkLabel(pack_frame, text="Select text Translation Method:", font=("Arial", 12, "bold"),text_color="green")
+		self.label_target_TextTranslationOption = customtkinter.CTkLabel(pack_frame, text="Select Translation Method:", font=("Arial", 12, "bold"),text_color="green")
 		self.label_target_TextTranslationOption.pack(pady=5)
 		TextTranslationOption = ["Local", "Online"]	
 		self.stringvarTextTranslationOption = customtkinter.StringVar()
@@ -96,25 +98,25 @@ class TranslatorGUI:
 		
 		# Create a frame for widgets using grid
 		grid_frame = Frame(master, bg="#222121")
-		grid_frame.pack(side="right", padx=4)
+		grid_frame.pack(side="right", padx=20 ,pady=20)
 		
-		self.label_translated_text = customtkinter.CTkLabel(grid_frame, text="Translated Text:", font=("Arial", 16, "bold"), text_color="white")
-		self.label_translated_text.grid(row=5, column=0, columnspan=2, pady=10)
+		#self.label_translated_text = customtkinter.CTkLabel(grid_frame, text="Translated Text:", font=("Arial", 16, "bold"), text_color="white")
+		#self.label_translated_text.grid(row=5, column=0, columnspan=2, pady=10)
 		
 		self.clear_button = customtkinter.CTkButton(grid_frame, text="Clear", command=self.clear_text)
 		self.clear_button.grid(row=6, column=0, columnspan=1, pady=10)
 		
-		self.text_translated = tk.Text(grid_frame, height=18, width=45, wrap = 'word')
+		self.text_translated = tk.Text(grid_frame, height=20, width=45, wrap = 'word')
 		self.text_translated.grid(row=7, column=0, columnspan=1, pady=10)
 
-		self.save_button = customtkinter.CTkButton(grid_frame, text="Save Text Translation", command=self.save_translation)
+		self.save_button = customtkinter.CTkButton(grid_frame, text="Save", command=self.save_translation)
 		self.save_button.grid(row=9, column=0, columnspan=1, pady=10)
 		
-		self.progress_bar = customtkinter.CTkProgressBar(grid_frame, variable=DoubleVar(), mode='indeterminate')
-		self.progress_bar.grid(row=10, column=0, columnspan=2, pady=10)
+		#self.progress_bar = customtkinter.CTkProgressBar(grid_frame, variable=DoubleVar(), mode='indeterminate')
+		#self.progress_bar.grid(row=11, column=0, columnspan=2, pady=10)
 
 		self.label_status = customtkinter.CTkLabel(grid_frame, text="")
-		self.label_status.grid(row=11, column=0, columnspan=2, pady=5)
+		self.label_status.grid(row=12, column=0, columnspan=2, pady=5)
 	
 	def switch_event(self):
 		print("switch toggled, current value:", self.switch_var.get())		
@@ -125,7 +127,7 @@ class TranslatorGUI:
 			if output_path:
 				translation_thread = threading.Thread(target=self.run_translation, args=(output_path,))
 				translation_thread.start()
-				self.progress_bar.start()
+				#self.progress_bar.start()
 				self.label_status.configure(text="Translation in progress...",font=("Arial", 16, "bold"),text_color="red")	 
 				
 	def extract_audio(self):
@@ -317,7 +319,7 @@ class TranslatorGUI:
 																 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
 				except Exception as e:
 					print(f"{e}")
-					self.progress_bar.stop()
+					#self.progress_bar.stop()
 					self.label_status.configure(text="An Error occurred!",font=("Arial", 16, "bold"),text_color="red")
 				
 				chunk_files.append(chunk_output_path)
@@ -349,7 +351,7 @@ class TranslatorGUI:
 			self.delete_chunk_files(Translation_chunk_files)
 			chunk_files = []  # List to store individual chunk files
 			Translation_chunk_files = []
-			self.progress_bar.stop()
+			#self.progress_bar.stop()
 
 			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")
 			
@@ -370,7 +372,7 @@ class TranslatorGUI:
 															 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
 			except Exception as e:
 				print(f"{e}")
-				self.progress_bar.stop()
+				#self.progress_bar.stop()
 				self.label_status.configure(text="An Error occurred!",font=("Arial", 16, "bold"),text_color="red")
 			
 			chunk_files = []  # List to store individual chunk files
@@ -391,12 +393,12 @@ class TranslatorGUI:
 				# Play the final merged audio file
 				self.translator_instance.play_audio(output_path)
 
-			self.progress_bar.stop()
+			#self.progress_bar.stop()
 
 			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")	
 		
 		else:
-			self.progress_bar.stop()
+			#self.progress_bar.stop()
 			print('For online translation: you need to use an audio file longer then 30 sec !')	
 			messagebox.showinfo("Info", f"For online translation: you need to use an audio file longer then 30 sec !")
 			self.label_status.configure(text="",font=("Arial", 16, "bold"),text_color="black")
