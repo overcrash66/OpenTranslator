@@ -56,11 +56,31 @@ class TranslatorGUI:
 
 		self.label_source_AudioFileLang = customtkinter.CTkLabel(pack_frame, text="For online or Hybrid Translation:\n Select Source Audio file Language:", font=("Arial", 12, "bold"),text_color="green")
 		self.label_source_AudioFileLang.pack(pady=5)
-		Src_lang = ['en', 'es', 'fr', 'de', 'it', 'pt', 'pl', 'tr', 'ru', 'nl', 'cs', 'ar', 'zh', 'iw', 'ko', 'ja', 'hi']
+		
+		self.Src_lang = {
+			"English": "en",
+			"Spanish": "es",
+			"French": "fr",
+			"German": "de",
+			"Japanese": "ja",
+			"Korean": "ko",
+			"Turkish": "tr",
+			"Arabic": "ar",
+			"Russian": "ru",
+			"Hebrew": "iw",
+			"Hindi": "hi",
+			"Italian": "it",
+			"Portuguese": "pt",
+			"Chinese (Mandarin)": "zh",
+			"Czech": "cs",
+			"Dutch": "nl",
+			"Polish": "pl"
+			}
+
 		self.stringvarsource_AudioFileLang = customtkinter.StringVar()
-		self.source_AudioFileLang_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarsource_AudioFileLang,values=Src_lang)
+		self.source_AudioFileLang_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarsource_AudioFileLang, values=list(self.Src_lang.keys()))
 		self.source_AudioFileLang_dropdown.pack(pady=5)
-		self.source_AudioFileLang_dropdown.set(Src_lang[13])
+		self.stringvarsource_AudioFileLang.set("Hebrew")
 
 		self.audio_path = ""
 		
@@ -76,15 +96,33 @@ class TranslatorGUI:
 
 		self.label_target_language = customtkinter.CTkLabel(pack_frame, text="Select Target Language:", font=("Arial", 12, "bold"),text_color="green")
 		self.label_target_language.pack(pady=5)
+		
+		self.languages = {
+			"English": "en",
+			"Spanish": "es",
+			"French": "fr",
+			"German": "de",
+			"Japanese": "ja",
+			"Korean": "ko",
+			"Turkish": "tr",
+			"Arabic": "ar",
+			"Russian": "ru",
+			"Hebrew": "hu",
+			"Hindi": "hi",
+			"Italian": "it",
+			"Portuguese": "pt",
+			"Chinese (Mandarin)": "zh",
+			"Czech": "cs",
+			"Dutch": "nl",
+			"Polish": "pl"
+			}
 
-		languages = ['en', 'es', 'fr', 'de', 'it', 'pt', 'pl', 'tr', 'ru', 'nl', 'cs', 'ar', 'zh', 'hu', 'ko', 'ja', 'hi']
-		
 		self.translator_instance = CustomTranslator()
-		
+
 		self.stringvarlanguage = customtkinter.StringVar()
-		self.target_language_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarlanguage,values=languages)
+		self.target_language_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarlanguage, values=list(self.languages.keys()))
 		self.target_language_dropdown.pack(pady=5)
-		self.target_language_dropdown.set(languages[11])
+		self.stringvarlanguage.set("Arabic")
 
 		self.translate_button = customtkinter.CTkButton(pack_frame, text="Translate", command=self.translate)
 		self.translate_button.pack(pady=5)
@@ -116,11 +154,11 @@ class TranslatorGUI:
 		#self.progress_bar.grid(row=11, column=0, columnspan=2, pady=10)
 
 		self.label_status = customtkinter.CTkLabel(grid_frame, text="")
-		self.label_status.grid(row=12, column=0, columnspan=2, pady=5)
-	
+		self.label_status.grid(row=12, column=0, columnspan=2, pady=5)	
+
 	def switch_event(self):
 		print("switch toggled, current value:", self.switch_var.get())		
-	
+
 	def translate(self):
 		if self.audio_path:
 			output_path = filedialog.asksaveasfilename(defaultextension=".mp3", filetypes=[("MP3 Files", "*.mp3")])
@@ -315,7 +353,7 @@ class TranslatorGUI:
 
 				try:
 					translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
-																 self.target_language_dropdown.get(),self.source_AudioFileLang_dropdown.get(),
+																 self.languages[self.stringvarlanguage.get()],self.Src_lang[self.stringvarsource_AudioFileLang.get()],
 																 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
 				except Exception as e:
 					print(f"{e}")
@@ -368,7 +406,7 @@ class TranslatorGUI:
 			chunk_idx = 0
 			try:
 				translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
-															 self.target_language_dropdown.get(),self.source_AudioFileLang_dropdown.get(),
+															 self.languages[self.stringvarlanguage.get()],self.Src_lang[self.stringvarsource_AudioFileLang.get()],
 															 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
 			except Exception as e:
 				print(f"{e}")
