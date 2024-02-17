@@ -131,7 +131,7 @@ class TranslatorGUI:
 		self.switch_1 = customtkinter.CTkSwitch(master=pack_frame, text="Play translated audio file", command=self.switch_event,variable=self.switch_var, onvalue="on", offvalue="off")
 		self.switch_1.pack(padx=20, pady=10)
 
-		self.stop_button = customtkinter.CTkButton(pack_frame, text="Stop Playing Translated File",command=self.stop_playing)
+		self.stop_button = customtkinter.CTkButton(pack_frame, text="Stop Playing Translated File",fg_color="#222121",text_color='#222121',command=self.stop_playing)
 		self.stop_button.pack(pady=5)
 		
 		# Create a frame for widgets using grid
@@ -141,13 +141,13 @@ class TranslatorGUI:
 		#self.label_translated_text = customtkinter.CTkLabel(grid_frame, text="Translated Text:", font=("Arial", 16, "bold"), text_color="white")
 		#self.label_translated_text.grid(row=5, column=0, columnspan=2, pady=10)
 		
-		self.clear_button = customtkinter.CTkButton(grid_frame, text="Clear", command=self.clear_text)
+		self.clear_button = customtkinter.CTkButton(grid_frame, text="Clear",fg_color="#222121",text_color='#222121', command=self.clear_text)
 		self.clear_button.grid(row=6, column=0, columnspan=1, pady=10)
 		
 		self.text_translated = tk.Text(grid_frame, height=20, width=45, wrap = 'word')
 		self.text_translated.grid(row=7, column=0, columnspan=1, pady=10)
 
-		self.save_button = customtkinter.CTkButton(grid_frame, text="Save", command=self.save_translation)
+		self.save_button = customtkinter.CTkButton(grid_frame, text="Save",fg_color="#222121",text_color='#222121', command=self.save_translation)
 		self.save_button.grid(row=9, column=0, columnspan=1, pady=10)
 		
 		#self.progress_bar = customtkinter.CTkProgressBar(grid_frame, variable=DoubleVar(), mode='indeterminate')
@@ -306,10 +306,15 @@ class TranslatorGUI:
 		self.text_translated.delete("1.0", "end")
 		self.text_translated.configure(state='disabled')
 		self.label_file_title.configure(text=f"")
+		self.save_button.configure(fg_color="#222121",text_color='#222121')
+		self.clear_button.configure(fg_color="#222121",text_color='#222121')
+		self.stop_button.configure(fg_color="#222121",text_color='#222121')
 	
 	def run_translation(self, output_path):
 		input_file = self.audio_path
-		
+		self.save_button.configure(fg_color="#222121",text_color='#222121')
+		self.clear_button.configure(fg_color="#222121",text_color='#222121')
+		self.stop_button.configure(fg_color="#222121",text_color='#222121')
 		# Get the duration of the input audio file
 		ffprobe_cmd = f'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "{input_file}"'
 		input_duration = float(subprocess.check_output(ffprobe_cmd, shell=True))
@@ -383,6 +388,7 @@ class TranslatorGUI:
 			if self.switch_var.get() == 'on':
 				# Play the final merged audio file
 				self.translator_instance.play_audio(output_path)
+				self.stop_button.configure(fg_color="#2B7FA3",text_color='white')
 
 			# Cleanup: Delete individual chunk files
 			self.delete_chunk_files(chunk_files)
@@ -393,8 +399,14 @@ class TranslatorGUI:
 
 			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")
 			
+			self.save_button.configure(fg_color="#2B7FA3",text_color='white')
+			self.clear_button.configure(fg_color="#2B7FA3",text_color='white')	
+
 		if input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Local':
 			print("Audio File less or equal 30 sec !")	
+			self.save_button.configure(fg_color="#222121",text_color='#222121')
+			self.clear_button.configure(fg_color="#222121",text_color='#222121')
+			self.stop_button.configure(fg_color="#222121",text_color='#222121')
 			# Update label text
 			self.label_status.configure(
 				text=f"Translation in progress...",
@@ -430,10 +442,14 @@ class TranslatorGUI:
 			if self.switch_var.get() == 'on':
 				# Play the final merged audio file
 				self.translator_instance.play_audio(output_path)
+				self.stop_button.configure(fg_color="#2B7FA3",text_color='white')
 
 			#self.progress_bar.stop()
 
 			self.label_status.configure(text="Translation complete!",font=("Arial", 16, "bold"),text_color="green")	
+
+			self.save_button.configure(fg_color="#2B7FA3",text_color='white')
+			self.clear_button.configure(fg_color="#2B7FA3",text_color='white')		
 		
 		if input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Online' or input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Hybrid':
 			#self.progress_bar.stop()
@@ -506,6 +522,7 @@ class TranslatorGUI:
 
 	def stop_playing(self):
 		self.translator_instance.stop_audio()
+		self.stop_button.configure(fg_color="#222121",text_color='#222121')
 	
 	def save_translation(self):
 		translation_text = self.text_translated.get("1.0", "end-1c")
