@@ -162,7 +162,8 @@ class TranslatorGUI:
 
 	def showErrorIfUserUseLocalTranslationAndSelectSourceLanguage(self,a,b,c):
 		if self.target_TextTranslationOption_dropdown.get() == 'Local':
-			CTkMessagebox(title="Error", message="With Local Translation: \n You don't need to select audio file Srource Language", icon="cancel")
+			#CTkMessagebox(title="Error", message="With Local Translation: \n You don't need to select audio file Srource Language", icon="cancel")
+			messagebox.showerror("Error", "With Local Translation: \n You don't need to select audio file Srource Language")
 
 	def Update_Gui(self,local,online,hybrid):
 		if self.target_TextTranslationOption_dropdown.get() != 'Local':
