@@ -6,10 +6,12 @@ from pydub import AudioSegment
 from pydub.utils import mediainfo
 import subprocess
 import customtkinter
+from CTkMessagebox import CTkMessagebox
 from CTkMenuBar import *
 import threading
 import webbrowser
 from .audio_translator import CustomTranslator
+import webbrowser
 import ctypes
 ctypes.windll.user32.SetProcessDPIAware()
 
@@ -53,8 +55,9 @@ class TranslatorGUI:
 		self.target_TextTranslationOption_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarTextTranslationOption,values=TextTranslationOption)
 		self.target_TextTranslationOption_dropdown.pack(pady=5)
 		self.target_TextTranslationOption_dropdown.set(TextTranslationOption[0])
+		self.stringvarTextTranslationOption.trace('w', self.Update_Gui) 
 
-		self.label_source_AudioFileLang = customtkinter.CTkLabel(pack_frame, text="For online or Hybrid Translation:\n Select Source Audio file Language:", font=("Arial", 12, "bold"),text_color="green")
+		self.label_source_AudioFileLang = customtkinter.CTkLabel(pack_frame, text="For online or Hybrid Translation:\n Select Source Audio file Language:",fg_color="#222121",text_color='#222121', font=("Arial", 12, "bold"))
 		self.label_source_AudioFileLang.pack(pady=5)
 		
 		self.Src_lang = {
@@ -78,9 +81,10 @@ class TranslatorGUI:
 			}
 
 		self.stringvarsource_AudioFileLang = customtkinter.StringVar()
-		self.source_AudioFileLang_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarsource_AudioFileLang, values=list(self.Src_lang.keys()))
+		self.source_AudioFileLang_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarsource_AudioFileLang,fg_color="#222121",text_color='#222121', values=list(self.Src_lang.keys()))
 		self.source_AudioFileLang_dropdown.pack(pady=5)
 		self.stringvarsource_AudioFileLang.set("Hebrew")
+		self.stringvarsource_AudioFileLang.trace('w', self.showErrorIfUserUseLocalTranslationAndSelectSourceLanguage) 
 
 		self.audio_path = ""
 		
@@ -155,6 +159,18 @@ class TranslatorGUI:
 
 		self.label_status = customtkinter.CTkLabel(grid_frame, text="")
 		self.label_status.grid(row=12, column=0, columnspan=2, pady=5)	
+
+	def showErrorIfUserUseLocalTranslationAndSelectSourceLanguage(self,a,b,c):
+		if self.target_TextTranslationOption_dropdown.get() == 'Local':
+			CTkMessagebox(title="Error", message="With Local Translation: \n You don't need to select audio file Srource Language", icon="cancel")
+
+	def Update_Gui(self,local,online,hybrid):
+		if self.target_TextTranslationOption_dropdown.get() != 'Local':
+			self.source_AudioFileLang_dropdown.configure(fg_color="#2B7FA3",text_color='white')
+			self.label_source_AudioFileLang.configure(fg_color="#222121",text_color='white')
+		else:
+			self.source_AudioFileLang_dropdown.configure(fg_color="#222121",text_color='#222121')
+			self.label_source_AudioFileLang.configure(fg_color="#222121",text_color='#222121')
 
 	def switch_event(self):
 		print("switch toggled, current value:", self.switch_var.get())		
@@ -287,8 +303,13 @@ class TranslatorGUI:
 		if Input_file_path != '':
 			Start(Input_file_path)
 	
+	def open_link(self):
+		webbrowser.open("https://github.com/overcrash66/OpenTranslator")
+
 	def show_about(self):
-		messagebox.showinfo("About", "Open Translator v1.0.0\n\nCreated by Wael Sahli\n\n")
+		msg = CTkMessagebox(title="About",message = "Open Translator v1.0.0\n\nCreated by Wael Sahli\n\n",option_1="Visite our website",option_2="Close")	
+		if msg.get()=='Visite our website':
+			self.open_link()
 	
 	def browse(self):
 		file_path = filedialog.askopenfilename(filetypes=[("Audio Files", "*.mp3")])
@@ -454,7 +475,7 @@ class TranslatorGUI:
 		if input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Online' or input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Hybrid':
 			#self.progress_bar.stop()
 			print('For online translation: you need to use an audio file longer then 30 sec !')	
-			messagebox.showinfo("Info", f"For online translation: you need to use an audio file longer then 30 sec !")
+			messagebox.showerror("Error", f"For online translation: you need to use an audio file longer then 30 sec !")
 			self.label_status.configure(text="",font=("Arial", 16, "bold"),text_color="black")
 
 	# Function to split audio into a chunk using ffmpeg
