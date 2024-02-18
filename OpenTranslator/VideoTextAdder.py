@@ -3,6 +3,11 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import json
 import threading
+import customtkinter
+import ctypes
+ctypes.windll.user32.SetProcessDPIAware()
+customtkinter.set_appearance_mode("System")    # Modes: system (default), light, dark
+customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
 class VideoTextAdder:
     def load_default_config(self):
@@ -63,47 +68,49 @@ class VideoTextAdder:
             messagebox.showerror("Error", f"An error occurred: {e}")
 
     def __init__(self):
-        window = tk.Tk()
+        window = customtkinter.CTk()
         window.title("Video Text Adder")
-
+        window.geometry("600x280")
+        window.resizable(False, False)
+        window.attributes("-topmost", True)
         default_config = self.load_default_config()
 
-        tk.Label(window, text="Input Video:").grid(row=0, column=0, padx=10, pady=5)
-        self.entry_video_path = tk.Entry(window, width=50)
+        customtkinter.CTkLabel(window, text="Input Video:").grid(row=0, column=0, padx=10, pady=5)
+        self.entry_video_path = customtkinter.CTkEntry(window, width=300)
         self.entry_video_path.grid(row=0, column=1, padx=10, pady=5)
-        tk.Button(window, text="Browse", command=self.browse_video).grid(row=0, column=2, pady=5)
+        customtkinter.CTkButton(window, text="Browse", command=self.browse_video).grid(row=0, column=2, pady=5)
 
-        tk.Label(window, text="Output Video:").grid(row=1, column=0, padx=10, pady=5)
-        self.entry_output_path = tk.Entry(window, width=50)
+        customtkinter.CTkLabel(window, text="Output Video:").grid(row=1, column=0, padx=10, pady=5)
+        self.entry_output_path = customtkinter.CTkEntry(window, width=300)
         self.entry_output_path.grid(row=1, column=1, padx=10, pady=5)
-        tk.Button(window, text="Browse", command=self.browse_output).grid(row=1, column=2, pady=5)
+        customtkinter.CTkButton(window, text="Browse", command=self.browse_output).grid(row=1, column=2, pady=5)
 
-        tk.Label(window, text="Text to Add:").grid(row=2, column=0, padx=10, pady=5)
-        self.entry_text = tk.Entry(window, width=50)
+        customtkinter.CTkLabel(window, text="Text to Add:").grid(row=2, column=0, padx=10, pady=5)
+        self.entry_text = customtkinter.CTkEntry(window, width=300)
         self.entry_text.grid(row=2, column=1, padx=10, pady=5)
         self.entry_text.insert(0, default_config['default_text'])
 
-        tk.Label(window, text="Text Color:").grid(row=3, column=0, padx=10, pady=5)
-        self.entry_text_color = tk.Entry(window, width=20)
+        customtkinter.CTkLabel(window, text="Text Color:").grid(row=3, column=0, padx=10, pady=5)
+        self.entry_text_color = customtkinter.CTkEntry(window, width=50)
         self.entry_text_color.grid(row=3, column=1, padx=10, pady=5)
         self.entry_text_color.insert(0, default_config['text_color'])
 
-        tk.Label(window, text="Font Size:").grid(row=4, column=0, padx=10, pady=5)
-        self.entry_font_size = tk.Entry(window, width=20)
+        customtkinter.CTkLabel(window, text="Font Size:").grid(row=4, column=0, padx=10, pady=5)
+        self.entry_font_size = customtkinter.CTkEntry(window, width=50)
         self.entry_font_size.grid(row=4, column=1, padx=10, pady=5)
         self.entry_font_size.insert(0, str(default_config['font_size']))
 
-        tk.Label(window, text="Font Style:").grid(row=5, column=0, padx=10, pady=5)
-        self.entry_font_style = tk.Entry(window, width=20)
+        customtkinter.CTkLabel(window, text="Font Style:").grid(row=5, column=0, padx=10, pady=5)
+        self.entry_font_style = tk.Entry(window, width=10)
         self.entry_font_style.grid(row=5, column=1, padx=10, pady=5)
         self.entry_font_style.insert(0, default_config['font_style'])
 
-        tk.Button(window, text="Apply Text to Video", command=self.apply_text_to_video).grid(row=6, column=1, pady=10)
+        customtkinter.CTkButton(window, text="Apply Text to Video", command=self.apply_text_to_video).grid(row=6, column=1, pady=10)
 
         self.entry_video_path.insert(0, "")
         self.entry_output_path.insert(0, "")
 
-        tk.mainloop()
+        window.mainloop()
 
 if __name__ == "__main__":
     gui = VideoTextAdder()

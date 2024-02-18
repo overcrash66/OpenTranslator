@@ -1,21 +1,25 @@
-MIT License
+GNU GENERAL PUBLIC LICENSE
+Version 3, 29 June 2007
 
-Copyright (c) 2023 overcrash
+Wael SAHLI, referred to as "you" in this license, hereby licenses this software and its associated documentation (the "Software")
+to you under the terms of the GNU General Public License version 3 or later (the "GPL").
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+1. You may copy, modify, and distribute the Software in source or binary form for any purpose.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+2. If you distribute the Software, you must distribute it under the terms of this license. You must include a copy 
+of this license with every copy of the Software and ensure that anyone receiving a copy also receives this license.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+3. You may not remove or alter any copyright notices or other proprietary notices included in the Software.
+
+4. If you modify the Software, you must include prominent notices stating that you modified the Software and the date of any changes.
+
+5. This license does not grant you any trademark rights, nor does it give you permission to use the names, trademarks, or logos of the Software's
+authors or contributors to endorse or promote products derived from this Software without specific prior written permission.
+
+6. THE SOFTWARE IS PROVIDED "AS IS," WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER LIABILITY,
+ WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM, OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+You acknowledge that you have read this license and agree to its terms. If you do not agree to the terms of this license, do not use or distribute the Software.
+
+For any questions regarding this license, you may contact Wael SAHLI.
