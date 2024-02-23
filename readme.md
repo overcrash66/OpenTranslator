@@ -1,12 +1,12 @@
-# Open Translator - Speech To Speech and Speech to text Translator - Online mode (No api keys are needed ) Or Local only mode
+# Open Translator - Speech To Speech and Speech to text Translator - Online mode (No api keys are needed ) Or Local only mode Or Hybrid mode
 
 Open Translator, Speech To Speech Translator with voice cloning and other cool features.
 
 ## Features
 
-- 17 Languages Supported:
+- Translate from and to 17 Languages :
 
-   - The translator supports various target languages, including English, Spanish, French, German, Dutch , Japanese, Korean, Turkish, Arabic, Russian, Hebrew, Hindi, Italian, Portuguese, Chinese, Czech and Hungarian.
+   - The translator supports various languages, including English, Spanish, French, German, Dutch , Japanese, Korean, Turkish, Arabic, Russian, Hebrew, Hindi, Italian, Portuguese, Chinese, Czech and Hungarian.
 
 ## Options
 
@@ -89,7 +89,7 @@ This project is licensed under the GPL License - see the [LICENSE](LICENSE) file
 
 Special thanks to:
 [XTTS_V2](https://huggingface.co/coqui/XTTS-v2)
-[whisper](https://github.com/openai/whisper)
-[mBART-50](https://huggingface.co/SnypzZz/Llama2-13b-Language-translate)
+[whisper v3 Large](https://huggingface.co/openai/whisper-large-v3)
+[Llama2-13b-Language-translate](https://huggingface.co/SnypzZz/Llama2-13b-Language-translate)
 [autosub](https://github.com/agermanidis/autosub)
 [gTTS](https://github.com/pndurette/gTTS)
