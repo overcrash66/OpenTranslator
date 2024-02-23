@@ -95,7 +95,7 @@ class TranslatorGUI:
 		self.browse_button.pack(pady=5)
 
 		#bug if title is too long this breck the UI and change frame box size
-		self.label_file_title = customtkinter.CTkLabel(pack_frame, text="Selected File Title:", font=("Arial", 12, "bold"),text_color="white", wraplength=50)
+		self.label_file_title = customtkinter.CTkLabel(pack_frame, text="Selected File Title:", font=("Arial", 12, "bold"),text_color="#222121", wraplength=50)
 		self.label_file_title.pack(pady=5)
 
 		self.label_target_language = customtkinter.CTkLabel(pack_frame, text="Select Target Language:", font=("Arial", 12, "bold"),text_color="green")
@@ -321,6 +321,7 @@ class TranslatorGUI:
 		if file_title != "":
 			file_title = file_title[:50] + "..." if len(file_title) > 50 else file_title
 			self.label_file_title.configure(text=f"Selected File Title: {file_title}")
+			self.label_file_title.configure(fg_color="#222121",text_color='white')
 	
 	def clear_text(self):
 		# Clear the text in the text widget
