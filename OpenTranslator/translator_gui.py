@@ -11,6 +11,7 @@ from CTkMenuBar import *
 import threading
 import webbrowser
 from .audio_translator import CustomTranslator
+from .VoiceRecorder import AudioRecorderGUI
 import webbrowser
 import ctypes
 ctypes.windll.user32.SetProcessDPIAware()
@@ -30,6 +31,7 @@ class TranslatorGUI:
 		filedropdown.add_option(option="Youtube Downloader", command=self.YouTubeDownloader)
 		filedropdown.add_option(option="Replace Audio in Video", command=self.AudioReplacerGUI)
 		filedropdown.add_option(option="Video Text Adder", command=self.VideoTextAdder)
+		filedropdown.add_option(option="Voice Recorder", command=AudioRecorderGUI)
 		filedropdown.add_option(option="PyTranscriber", command=self.PyTranscriber)
 		filedropdown.add_option(option="Exit", command=master.destroy)
 
@@ -222,8 +224,8 @@ class TranslatorGUI:
 
 		except Exception as e:
 			print(f"An error occurred: {str(e)}")
-			messagebox.showerror("Error", f"An error occurred: {str(e)}")
-	
+			messagebox.showerror("Error", f"An error occurred: {str(e)}")	
+
 	def VideoTextAdder(self):	
 		def runVideoTextAdder():
 			VideoTextAdder_subprocess = subprocess.run(["python", VideoTextAdder_path], check=True)

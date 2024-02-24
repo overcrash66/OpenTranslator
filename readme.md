@@ -17,6 +17,7 @@ Open Translator, Speech To Speech Translator with voice cloning and other cool f
 - YouTube Downloader
 - Replace Audio in Video
 - Video Text Adder
+- Voice Recorder
 - PyTranscriber (shortcut)
 - Exit
 
