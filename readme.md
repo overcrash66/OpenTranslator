@@ -1,6 +1,7 @@
-# Open Translator - Speech To Speech and Speech to text Translator - Online mode (No api keys are needed ) Or Local only mode Or Hybrid mode
-
-Open Translator, Speech To Speech Translator with voice cloning and other cool features.
+# Open Translator: Speech To Speech and Speech to text Translator with voice cloning and other cool features
+## Can be run as Online mode ( connected to internet and make api calls using Google translate - No api keys are needed ) 
+## Or Fully Locally  (using local LLM's)
+## Or as a Hybrid mode (mix of Online and one single Local LLM )
 
 ## Features
 
@@ -27,7 +28,7 @@ Make sure you have the following dependencies installed:
 
 - Python >= 3.10
 - Pip (Python package installer)
-- [FFmpeg](https://ffmpeg.org/download.html) #Should be installed manually
+- [FFmpeg](https://ffmpeg.org/download.html) #Should be installed manually and added to sys env path
 
 ## Usage
 
@@ -55,14 +56,14 @@ venv\Scripts\activate
 
 4- Install the required Python packages using:
 
-If you have CUDA 118 and you would like to use GPU:
+If you would like to use CUDA 118 - GPU:
 
 ```bash
 pip install torch==2.1.2+cu118 torchaudio==2.1.2+cu118 --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements.txt
 ```
 
-OR use CPU only:
+OR by default you use CPU only:
 
 ```bash
 pip install -r requirements.txt
@@ -80,7 +81,7 @@ python OpenTranslator.py
 
 ## Configuration
 
-- You can customize the translation model and other settings by modifying the script.
+- You can customize the translation models and other settings by modifying the script.
 
 ## License
 
