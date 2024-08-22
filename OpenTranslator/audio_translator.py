@@ -173,42 +173,6 @@ class CustomTranslator:
                     execution_time = (end_time - start_time) / 60
                     print(f"Local Translation Execution time: {execution_time:.2f} minutes")
 
-                    # Explore new approch to translate text
-                    #"elybes/IFRS_en_ar_translation"
-
-                    # Use Lama3 to validate translated text and fix translation errors
-                    # print("Lama3 text Validation started ..")
-                    # start_time = time.time()
-                    
-                    # Load Llama-3.1-8B model
-                    # model_name = "meta-llama/Meta-Llama-3.1-8B-Instruct"
-                    # tokenizer2 = AutoTokenizer.from_pretrained(model_name, device=device)
-                    # model2 = AutoModelForCausalLM.from_pretrained(model_name).to(device)
-                    
-                    # prompt = f"""
-                    # Compare the following original text and its translation. Identify any errors or inaccuracies in the translation.
-                    
-                    # Original: "{transcription}"
-                    # Translation: "{translated_text}"
-                    
-                    # Return only the corrected translation.
-                    # """
-                    
-                    # # Encode the prompt
-                    # inputs = tokenizer2(prompt, return_tensors='pt')
-                    
-                    # # Generate a response
-                    # outputs = model2.generate(**inputs, max_length=500, temperature=0.5)
-                    
-                    # # Decode the response
-                    # response2 = tokenizer2.decode(outputs[0], skip_special_tokens=True)
-
-                    # print(response2)
-                    # end_time = time.time()
-                    # execution_time = (end_time - start_time) / 60
-                    # print(f"Lama3 Validation Execution time: {execution_time:.2f} minutes")
-                    # translated_text = response2
-
                 if target_language == 'en':
                     translated_text = transcription
                             
