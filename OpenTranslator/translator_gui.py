@@ -43,7 +43,7 @@ class TranslatorGUI:
 		master.maxsize(740,680)
 		master.attributes('-fullscreen', False)
 
-		self.label = customtkinter.CTkLabel(master=master, text="Open Translator", font=("Comic Sans MS", 30, "bold"),text_color="red")
+		self.label = customtkinter.CTkLabel(master=master, text="Open Translator", font=("Arial", 30, "bold"),text_color="white")
 		self.label.pack(side="top", pady=10)
 
 		# Create a frame for widgets using pack
@@ -228,7 +228,7 @@ class TranslatorGUI:
 
 	def VideoTextAdder(self):	
 		def runVideoTextAdder():
-			VideoTextAdder_subprocess = subprocess.run(["python", VideoTextAdder_path], check=True)
+			VideoTextAdder_subprocess = subprocess.run(["py", VideoTextAdder_path], check=True)
 
 		VideoTextAdder_path = r'OpenTranslator\VideoTextAdder.py'
 		if os.path.exists(VideoTextAdder_path):
@@ -237,7 +237,7 @@ class TranslatorGUI:
 
 	def AudioReplacerGUI(self):
 		def runAudioReplacerGUI():
-			AudioReplacerGUI_subprocess = subprocess.run(["python", AudioReplacerGUI_path], check=True)
+			AudioReplacerGUI_subprocess = subprocess.run(["py", AudioReplacerGUI_path], check=True)
 
 		AudioReplacerGUI_path = r'OpenTranslator\ReplaceVideoAudio.py'
 		if os.path.exists(AudioReplacerGUI_path):
@@ -246,7 +246,7 @@ class TranslatorGUI:
 
 	def YouTubeDownloader(self):
 		def runYt():
-			YouTubeDownloader_subprocess = subprocess.run(["python", YouTubeDownloader_path], check=True)
+			YouTubeDownloader_subprocess = subprocess.run(["py", YouTubeDownloader_path], check=True)
 
 		YouTubeDownloader_path = r'OpenTranslator\youtube_downloader.py'
 		if os.path.exists(YouTubeDownloader_path):
@@ -310,7 +310,7 @@ class TranslatorGUI:
 		webbrowser.open("https://github.com/overcrash66/OpenTranslator")
 
 	def show_about(self):
-		msg = CTkMessagebox(title="About",message = "Open Translator v1.0.0\n\nCreated by Wael Sahli\n\n",option_1="Visite our website",option_2="Close")	
+		msg = CTkMessagebox(title="About",message = "Open Translator v1.0.1\n\nCreated by Wael Sahli\n\n",option_1="Visite our website",option_2="Close")	
 		if msg.get()=='Visite our website':
 			self.open_link()
 	

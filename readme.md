@@ -58,9 +58,22 @@ venv\Scripts\activate
 
 If you would like to use CUDA 118 - GPU:
 
+PY -3.10
 ```bash
 pip install torch==2.1.2+cu118 torchaudio==2.1.2+cu118 --index-url https://download.pytorch.org/whl/cu118
-pip install -r requirements.txt
+```
+
+PY -3.12
+```bash
+pip install torch==2.2.1+cu118 torchaudio==2.2.1+cu118 --index-url https://download.pytorch.org/whl/cu118
+```
+
+Install mecab 
+https://github.com/ikegami-yukino/mecab/releases
+
+
+```bash
+pip install -r requirements_Py312.txt
 ```
 
 OR by default you use CPU only:
