@@ -38,10 +38,10 @@ class TranslatorGUI:
 		helpdropdown = CustomDropdownMenu(widget=self.help, width=50)
 		helpdropdown.add_option(option="About", command=self.show_about)
 		master.title("Open Translator")
-		master.geometry("740x680")
-		master.minsize(740,680)
-		master.maxsize(740,680)
-		master.attributes('-fullscreen', False)
+		#master.geometry("740x680")
+		#master.minsize(740,680)
+		#master.maxsize(740,680)
+		#master.attributes('-fullscreen', False)
 
 		self.label = customtkinter.CTkLabel(master=master, text="Open Translator", font=("Arial", 30, "bold"),text_color="white")
 		self.label.pack(side="top", pady=10)
@@ -137,7 +137,8 @@ class TranslatorGUI:
 		self.switch_1 = customtkinter.CTkSwitch(master=pack_frame, text="Play translated audio file", command=self.switch_event,variable=self.switch_var, onvalue="on", offvalue="off")
 		self.switch_1.pack(padx=20, pady=10)
 
-		self.stop_button = customtkinter.CTkButton(pack_frame, text="Stop Playing Translated File",fg_color="#222121",text_color='#222121',command=self.stop_playing)
+		#self.stop_button = customtkinter.CTkButton(pack_frame, text="Stop Playing Translated File",fg_color="#222121",text_color='#222121',command=self.stop_playing)
+		self.stop_button = customtkinter.CTkButton(pack_frame, text="Stop Playing Translated File",command=self.stop_playing)
 		self.stop_button.pack(pady=5)
 		
 		# Create a frame for widgets using grid
@@ -147,7 +148,8 @@ class TranslatorGUI:
 		#self.label_translated_text = customtkinter.CTkLabel(grid_frame, text="Translated Text:", font=("Arial", 16, "bold"), text_color="white")
 		#self.label_translated_text.grid(row=5, column=0, columnspan=2, pady=10)
 		
-		self.clear_button = customtkinter.CTkButton(grid_frame, text="Clear",fg_color="#222121",text_color='#222121', command=self.clear_text)
+		#self.clear_button = customtkinter.CTkButton(grid_frame, text="Clear",fg_color="#222121",text_color='#222121', command=self.clear_text)
+		self.clear_button = customtkinter.CTkButton(grid_frame, text="Clear", command=self.clear_text)
 		self.clear_button.grid(row=6, column=0, columnspan=1, pady=10)
 		
 		self.text_translated = tk.Text(grid_frame, height=20, width=45, wrap = 'word')
@@ -332,14 +334,14 @@ class TranslatorGUI:
 		self.text_translated.configure(state='disabled')
 		self.label_file_title.configure(text=f"")
 		self.save_button.configure(fg_color="#222121",text_color='#222121')
-		self.clear_button.configure(fg_color="#222121",text_color='#222121')
-		self.stop_button.configure(fg_color="#222121",text_color='#222121')
+		#self.clear_button.configure(fg_color="#222121",text_color='#222121')
+		#self.stop_button.configure(fg_color="#222121",text_color='#222121')
 	
 	def run_translation(self, output_path):
 		input_file = self.audio_path
 		self.save_button.configure(fg_color="#222121",text_color='#222121')
 		self.clear_button.configure(fg_color="#222121",text_color='#222121')
-		self.stop_button.configure(fg_color="#222121",text_color='#222121')
+		#self.stop_button.configure(fg_color="#222121",text_color='#222121')
 		# Get the duration of the input audio file
 		ffprobe_cmd = f'ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "{input_file}"'
 		input_duration = float(subprocess.check_output(ffprobe_cmd, shell=True))
@@ -431,7 +433,7 @@ class TranslatorGUI:
 			print("Audio File less or equal 30 sec !")	
 			self.save_button.configure(fg_color="#222121",text_color='#222121')
 			self.clear_button.configure(fg_color="#222121",text_color='#222121')
-			self.stop_button.configure(fg_color="#222121",text_color='#222121')
+			#self.stop_button.configure(fg_color="#222121",text_color='#222121')
 			# Update label text
 			self.label_status.configure(
 				text=f"Translation in progress...",
@@ -467,7 +469,7 @@ class TranslatorGUI:
 			if self.switch_var.get() == 'on':
 				# Play the final merged audio file
 				self.translator_instance.play_audio(output_path)
-				self.stop_button.configure(fg_color="#2B7FA3",text_color='white')
+				#self.stop_button.configure(fg_color="#2B7FA3",text_color='white')
 
 			#self.progress_bar.stop()
 

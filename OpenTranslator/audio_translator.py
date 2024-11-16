@@ -161,7 +161,6 @@ class CustomTranslator:
                     model_Target_language = language_mapping.get(target_language, "en_XX")       
                     
                     # Generate tokens on the GPU
-                    #generated_tokens = tt.generate(**model_inputs,forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
                     generated_tokens = tt.generate(input_ids=input_ids, forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
                     
                     # Decode and join the translated text
