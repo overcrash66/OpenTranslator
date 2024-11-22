@@ -1,10 +1,11 @@
 sounddevice
 transformers
-TTS
+mecab-python3
+coqui-tts
 torchaudio
 Pillow
 pydub
-pytube
+yt-dlp
 librosa
 customtkinter
 CTkMessagebox

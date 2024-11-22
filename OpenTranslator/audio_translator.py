@@ -16,6 +16,8 @@ from autosub.onlineTranslator import Ctr_Autosub
 from autosub import Translator, GOOGLE_SPEECH_API_KEY
 from gtts import gTTS
 
+from transformers import AutoTokenizer, AutoModelForCausalLM
+
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class CustomTranslator:
@@ -159,7 +161,6 @@ class CustomTranslator:
                     model_Target_language = language_mapping.get(target_language, "en_XX")       
                     
                     # Generate tokens on the GPU
-                    #generated_tokens = tt.generate(**model_inputs,forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
                     generated_tokens = tt.generate(input_ids=input_ids, forced_bos_token_id=tokenizer.lang_code_to_id[model_Target_language])
                     
                     # Decode and join the translated text
@@ -170,6 +171,7 @@ class CustomTranslator:
                     end_time = time.time()
                     execution_time = (end_time - start_time) / 60
                     print(f"Local Translation Execution time: {execution_time:.2f} minutes")
+
                 if target_language == 'en':
                     translated_text = transcription
                             

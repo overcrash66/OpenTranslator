@@ -1,12 +1,10 @@
 from tkinter import filedialog, messagebox
-from pytube import YouTube
-from PIL import Image, ImageTk
 import customtkinter
-import subprocess
 import re
 import os
 import threading
 import unicodedata
+import subprocess
 
 class YouTubeDownloader:
     def __init__(self):
@@ -22,7 +20,7 @@ class YouTubeDownloader:
         url_label = customtkinter.CTkLabel(new_window, text="YouTube URL:")
         url_label.grid(row=0, column=0, padx=10, pady=10)
 
-        self.url_entry = customtkinter.CTkEntry(new_window, width=300)  # Set width to 300
+        self.url_entry = customtkinter.CTkEntry(new_window, width=300)
         self.url_entry.grid(row=0, column=1, padx=10, pady=10)
 
         self.download_button = customtkinter.CTkButton(new_window, text="Download", command=self.start_download)
@@ -38,7 +36,6 @@ class YouTubeDownloader:
         title = unicodedata.normalize('NFKD', title).encode('ASCII', 'ignore').decode('utf-8')
         return title
 
-
     def start_download(self):
         url = self.url_entry.get()
 
@@ -51,25 +48,20 @@ class YouTubeDownloader:
 
     def download(self, url):
         try:
-            yt = YouTube(url)
-            video_title = self.sanitize_filename(yt.title)
-            output_path = os.path.join(os.getcwd(), f"{video_title}.mp4")
-
-            if os.path.exists(output_path):
-                os.remove(output_path)
-                print(f"Deleted existing file: {output_path}")
-
+            output_path = os.getcwd()
             self.status_label.configure(text="Downloading...")
+            
+            # Using yt-dlp to download the video
+            result = subprocess.run([
+                'yt-dlp',
+                '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
+                '-o', f'{output_path}/%(title)s.%(ext)s',
+                url
+            ], check=True)
+            
+            self.status_label.configure(text="Download complete!")
 
-            video_stream = yt.streams.get_highest_resolution()
-            video_url = video_stream.url
-
-            subprocess.run(['ffmpeg', '-i', video_url, '-c', 'copy', output_path])
-
-            message = f"Download complete!\nFile saved as: {output_path}"
-            self.status_label.configure(text=message)
-
-        except Exception as e:
+        except subprocess.CalledProcessError as e:
             error_message = f"Error: {str(e)}"
             self.status_label.configure(text=error_message)
 
