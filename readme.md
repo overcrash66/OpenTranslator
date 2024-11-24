@@ -88,9 +88,18 @@ pip install -r requirements.txt
 python OpenTranslator.py
 ```
 
+Or Local mode (using a set of LLM's) for audio file translation only, using a WEB UI (Gradio)
+
+```
+python WebUI.py
+
+```
+
 ## GUI Preview
 
 ![Redesigned (Custom)](Screenshot2.png)
+
+![Web](Screenshot.png)
 
 ## Configuration
 
