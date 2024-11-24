@@ -36,29 +36,8 @@ languages = {
     "Polish": "pl"
 }
 
-# Define the source languages dictionary
-Src_lang = {
-    "English": "en",
-    "Spanish": "es",
-    "French": "fr",
-    "German": "de",
-    "Japanese": "ja",
-    "Korean": "ko",
-    "Turkish": "tr",
-    "Arabic": "ar",
-    "Russian": "ru",
-    "Hebrew": "he",
-    "Hindi": "hi",
-    "Italian": "it",
-    "Portuguese": "pt",
-    "Chinese (Mandarin)": "zh",
-    "Czech": "cs",
-    "Dutch": "nl",
-    "Polish": "pl"
-}
-
 # Define the translation options
-TextTranslationOption = ["Local", "Online", "Hybrid"]
+TextTranslationOption = ["Local"]
 
 # Function to handle file uploads
 def upload_file(file):
@@ -67,7 +46,7 @@ def upload_file(file):
     return f"Selected File Title: {os.path.basename(audio_path)}"
 
 # Function to run the translation process
-def run_translation(translation_method, source_lang, target_lang):
+def run_translation(translation_method, target_lang):
     output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(audio_path))[0]}_translated.mp3")
     input_file = audio_path
     print(audio_path)
@@ -90,7 +69,7 @@ def run_translation(translation_method, source_lang, target_lang):
             
             try:
                 translation_result = translator_instance.process_audio_chunk(chunk_output_path,
-                                                                             target_lang, source_lang,
+                                                                             target_lang,
                                                                              chunk_idx, output_path, translation_method)
             except Exception as e:
                 print(f"{e}")
@@ -103,10 +82,8 @@ def run_translation(translation_method, source_lang, target_lang):
 
         final_output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}-temp.wav")
         
-        if translation_method == 'Local' or translation_method == 'Hybrid':
+        if translation_method == 'Local':
             merge_audio_files(Translation_chunk_files, final_output_path)
-        if translation_method == 'Online':
-            merge_online_audio_files(Translation_chunk_files, final_output_path)
 
         subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
         os.remove(final_output_path)
@@ -125,7 +102,7 @@ def run_translation(translation_method, source_lang, target_lang):
         print('duration less then 30')
         try:
             translation_result = translator_instance.process_audio_chunk(chunk_output_path,
-                                                                         target_lang, source_lang,
+                                                                         target_lang,
                                                                          chunk_idx, output_path, translation_method)
         except Exception as e:
             print(f"{e}")
@@ -137,9 +114,6 @@ def run_translation(translation_method, source_lang, target_lang):
         os.remove(Translation_chunk_output_path)
 
         return 'Translation complete' + ' file saved to: ' +str(output_path)
-
-    if input_duration <= 30 and (translation_method == 'Online' or translation_method == 'Hybrid'):
-        return "For online translation: you need to use an audio file longer than 30 sec!"
 
 # Function to split audio into a chunk using ffmpeg
 def split_audio_chunk(input_path, output_path, start_time, end_time):
@@ -165,19 +139,6 @@ def merge_audio_files(input_files, output_file):
             print(f"Error merging audio file {input_file}: {e}")
     merged_audio.export(output_file, format="wav")
 
-# Function to merge online audio files
-def merge_online_audio_files(input_files, output_file):
-    merged_audio = AudioSegment.silent(duration=0)
-    for input_file in input_files:
-        try:
-            chunk_audio = AudioSegment.from_file(input_file, format="mp3")
-            merged_audio += chunk_audio
-        except FileNotFoundError as e:
-            print(f"Error merging audio file {input_file}: {e}")
-        except Exception as e:
-            print(f"Error merging audio file {input_file}: {e}")
-    merged_audio.export(output_file, format="mp3")
-
 # Function to delete chunk files
 def delete_chunk_files(files):
     for file in files:
@@ -198,9 +159,6 @@ with gr.Blocks() as demo:
             gr.Markdown("## Select Translation Method:")
             translation_method = gr.Dropdown(choices=TextTranslationOption, value=TextTranslationOption[0], label="Translation Method")
 
-            gr.Markdown("## For online or hybrid translation: Select Source Audio file Language:")
-            source_lang = gr.Dropdown(choices=list(Src_lang.values()), value="he", label="Source Language")
-
             gr.Markdown("## Select Audio File:")
             audio_file = gr.File(type="filepath", label="Upload Audio File")
             file_title = gr.Textbox(label="Selected File Title")
@@ -214,6 +172,6 @@ with gr.Blocks() as demo:
         with gr.Column():
             translated_text = gr.Textbox(label="", lines=20, interactive=False)
             
-            translate_button.click(run_translation, inputs=[translation_method, source_lang, target_lang], outputs=translated_text)
+            translate_button.click(run_translation, inputs=[translation_method, target_lang], outputs=translated_text)
 
 demo.launch(server_name="127.0.0.2", server_port=7861)

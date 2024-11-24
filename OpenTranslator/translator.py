@@ -4,12 +4,9 @@ import logging
 import librosa
 import torch
 import sounddevice as sd
-from OpenTranslator.sentence_translator import SentenceTranslator
 from transformers import MBartForConditionalGeneration, MBart50TokenizerFast
 from TTS.api import TTS
 import time
-from autosub.onlineTranslator import Ctr_Autosub
-from gtts import gTTS
 import os
 import unicodedata
 
@@ -29,33 +26,8 @@ class CustomTranslator:
         self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v3").to(device)
         # self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
 
-    def process_audio_chunk(self, input_path, target_language, src_language, chunk_idx, output_path, translation_method):
+    def process_audio_chunk(self, input_path, target_language, chunk_idx, output_path, translation_method):
         try:
-            if translation_method == 'Online' or translation_method == 'Hybrid':
-                print('Starting Online translation!')
-                src_language = src_language  # Assuming src_lang is defined elsewhere
-                transcripts = Ctr_Autosub.generate_subtitles(source_path=input_path, output=output_path, src_language=src_language)
-
-                print('Transcripts: ' + str(transcripts))
-                translator = SentenceTranslator(src=src_language, dst=target_language)
-                translated = []
-                for byte_string in transcripts:
-                    if byte_string is not None:
-                        translated_text = translator(byte_string)
-                        translated.append(translated_text)
-
-                translated_text = ' '.join(translated)
-                print('Translated text: ' + str(translated_text))
-
-                Translation_chunk_output_path = os.path.join(self.output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}_Translation_chunk{chunk_idx + 1}.wav")
-                print(str(Translation_chunk_output_path))
-                if translation_method == 'Hybrid':
-                    self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)
-                if translation_method == 'Online':
-                    tts = gTTS(translated_text, lang=target_language, slow=False)
-                    tts.save(Translation_chunk_output_path)
-                return translated_text
-
             if translation_method == 'Local':
                 self.load_models()
                 start_time = time.time()
