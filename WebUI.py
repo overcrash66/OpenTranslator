@@ -216,4 +216,4 @@ with gr.Blocks() as demo:
             
             translate_button.click(run_translation, inputs=[translation_method, source_lang, target_lang], outputs=translated_text)
 
-demo.launch()
+demo.launch(server_name="127.0.0.2", server_port=7861)
