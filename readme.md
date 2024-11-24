@@ -90,8 +90,6 @@ python OpenTranslator.py
 
 Or Local mode (using a set of LLM's) for audio file translation only, using a WEB UI (Gradio)
 
-Please note Web UI is in beta and still in active development
-
 ```
 python WebUI.py
 

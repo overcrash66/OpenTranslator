@@ -36,6 +36,8 @@ languages = {
     "Polish": "pl"
 }
 
+language_choices = [(lang, code) for lang, code in languages.items()]
+
 # Define the translation options
 TextTranslationOption = ["Local"]
 
@@ -43,7 +45,7 @@ TextTranslationOption = ["Local"]
 def upload_file(file):
     global audio_path
     audio_path = file.name
-    return f"Selected File Title: {os.path.basename(audio_path)}"
+    #return f"Selected File Title: {os.path.basename(audio_path)}"
 
 # Function to run the translation process
 def run_translation(translation_method, target_lang):
@@ -57,7 +59,8 @@ def run_translation(translation_method, target_lang):
         num_chunks = int(input_duration / max_chunk_duration)
         chunk_files = []
         Translation_chunk_files = []
-
+        translated_text = []
+        
         for chunk_idx in range(num_chunks):
             print('duration more then 30- num_chunks: '+str(num_chunks))
             print('duration more then 30- chunk_idx'+str(chunk_idx))
@@ -74,10 +77,12 @@ def run_translation(translation_method, target_lang):
             except Exception as e:
                 print(f"{e}")
                 return "An Error occurred!"
+            
+            translated_text.append(translation_result)    
 
             chunk_files.append(chunk_output_path)
             Translation_chunk_output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}_Translation_chunk{chunk_idx + 1}.wav")
-            #Translation_chunk_output_path = os.path.join(output_dir, f"w_Translation_chunk{chunk_idx + 1}.wav")
+            
             Translation_chunk_files.append(Translation_chunk_output_path)
 
         final_output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}-temp.wav")
@@ -93,10 +98,11 @@ def run_translation(translation_method, target_lang):
         chunk_files = []  # List to store individual chunk files
         Translation_chunk_files = []
         
-        return 'Translation complete'+ ' file saved to: ' +str(output_path)
+        translation_result = ', '.join(translated_text)
+        return translation_result, output_path
 
     if input_duration <= 30 and translation_method == 'Local':
-        
+        #translated_text = []
         chunk_output_path = input_file
         chunk_idx = 0
         print('duration less then 30')
@@ -108,12 +114,13 @@ def run_translation(translation_method, target_lang):
             print(f"{e}")
             return "An Error occurred!"
 
+        #translated_text.append(translated_text)    
         Translation_chunk_output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}_Translation_chunk1.wav")
 
         subprocess.run(['ffmpeg', '-i', Translation_chunk_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
         os.remove(Translation_chunk_output_path)
-
-        return 'Translation complete' + ' file saved to: ' +str(output_path)
+        
+        return translation_result, output_path
 
 # Function to split audio into a chunk using ffmpeg
 def split_audio_chunk(input_path, output_path, start_time, end_time):
@@ -149,6 +156,8 @@ def delete_chunk_files(files):
         except Exception as e:
             print(f"Error deleting file {file}: {e}")
 
+def upload_audio(audio_file):
+    return audio_file
 
 # Define the Gradio interface
 with gr.Blocks() as demo:
@@ -156,22 +165,25 @@ with gr.Blocks() as demo:
 
     with gr.Row():
         with gr.Column():
-            gr.Markdown("## Select Translation Method:")
+            #gr.Markdown("## Select Translation Method:")
             translation_method = gr.Dropdown(choices=TextTranslationOption, value=TextTranslationOption[0], label="Translation Method")
 
             gr.Markdown("## Select Audio File:")
             audio_file = gr.File(type="filepath", label="Upload Audio File")
-            file_title = gr.Textbox(label="Selected File Title")
-            audio_file.upload(upload_file, audio_file, file_title)
+            audio_player = gr.Audio(label="Audio Player", interactive=True)          
+
+            #file_title = gr.Textbox(label="Selected File Title")
+            audio_file.upload(upload_file, audio_file)
+            audio_file.change(upload_audio, audio_file, audio_player)
 
             gr.Markdown("## Select Target Language:")
-            target_lang = gr.Dropdown(choices=list(languages.values()), value="ar", label="Target Language")
-            
+            target_lang = gr.Dropdown(choices=language_choices, value="ar", label="Target Language")
+            #print(target_lang)
             translate_button = gr.Button("translate")
 
         with gr.Column():
-            translated_text = gr.Textbox(label="", lines=20, interactive=False)
-            
-            translate_button.click(run_translation, inputs=[translation_method, target_lang], outputs=translated_text)
+            translated_text = gr.Textbox(label="Translated text", lines=20, interactive=False)
+            audio_output = gr.Audio(label="Translated Audio")
+            translate_button.click(run_translation, inputs=[translation_method, target_lang], outputs=[translated_text, audio_output])
 
 demo.launch(server_name="127.0.0.2", server_port=7861)
