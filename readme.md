@@ -88,9 +88,18 @@ pip install -r requirements.txt
 python OpenTranslator.py
 ```
 
+Or audio file translation only using a WEB UI (gradio)
+
+```
+python WebUI.py
+
+```
+
 ## GUI Preview
 
 ![Redesigned (Custom)](Screenshot2.png)
+
+![Web](Screenshot.png)
 
 ## Configuration
 

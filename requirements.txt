@@ -17,3 +17,4 @@ mecab
 unidic-lite
 google-api-python-client
 gtts
+gradio
