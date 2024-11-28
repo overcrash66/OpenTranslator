@@ -102,109 +102,23 @@ python WebUI.py
 ![Web](Screenshot.png)
 
 ## Audio translation examples:
-
-- Arabic Test:
-  <audio controls>
-    <source src="https://jmp.sh/s/EzCnFUdaucwBtF3qrIdb" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Chinese Test:
-  <audio controls>
-    <source src="./testResults/cn-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Czech Test:
-  <audio controls>
-    <source src="./testResults/cs-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- German Test:
-  <audio controls>
-    <source src="./testResults/de-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- English Test:
-  <audio controls>
-    <source src="./testResults/en-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Spanish Original Audio that was used to translate to all the other languages:
-  <audio controls>
-    <source src="./testResults/es-Original-Audio.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- French Test:
-  <audio controls>
-    <source src="./testResults/fr-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Hindi Test:
-  <audio controls>
-    <source src="./testResults/hi-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Hungarian Test:
-  <audio controls>
-    <source src="./testResults/hu-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Italian Test:
-  <audio controls>
-    <source src="./testResults/it-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Japanese Test:
-  <audio controls>
-    <source src="./testResults/jp-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Korean Test:
-  <audio controls>
-    <source src="./testResults/ko-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Dutch Test:
-  <audio controls>
-    <source src="./testResults/nl-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Polish Test:
-  <audio controls>
-    <source src="./testResults/pl-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Portuguese Test:
-  <audio controls>
-    <source src="./testResults/pt-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Russian Test:
-  <audio controls>
-    <source src="./testResults/ru-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
-- Turkish Test:
-  <audio controls>
-    <source src="./testResults/tr-test.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-
+- [ar-test.mp3](./testResults/ar-test.mp3)
+- [cn-test.mp3](./testResults/cn-test.mp3)
+- [cs-test.mp3](./testResults/cs-test.mp3)
+- [de-test.mp3](./testResults/de-test.mp3)
+- [en-test.mp3](./testResults/en-test.mp3)
+- [es-Original-Audio.mp3](./testResults/es-Original-Audio.mp3)
+- [fr-test.mp3](./testResults/fr-test.mp3)
+- [hi-test.mp3](./testResults/hi-test.mp3)
+- [hu-test.mp3](./testResults/hu-test.mp3)
+- [it-test.mp3](./testResults/it-test.mp3)
+- [jp-test.mp3](./testResults/jp-test.mp3)
+- [ko-test.mp3](./testResults/ko-test.mp3)
+- [nl-test.mp3](./testResults/nl-test.mp3)
+- [pl-test.mp3](./testResults/pl-test.mp3)
+- [pt-test.mp3](./testResults/pt-test.mp3)
+- [ru-test.mp3](./testResults/ru-test.mp3)
+- [tr-test.mp3](./testResults/tr-test.mp3)
 
 ## Configuration
 
