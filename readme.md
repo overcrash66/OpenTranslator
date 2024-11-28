@@ -101,6 +101,25 @@ python WebUI.py
 
 ![Web](Screenshot.png)
 
+## Audio translation examples:
+- [ar-test.mp3](./testResults/ar-test.mp3)
+- [cn-test.mp3](./testResults/cn-test.mp3)
+- [cs-test.mp3](./testResults/cs-test.mp3)
+- [de-test.mp3](./testResults/de-test.mp3)
+- [en-test.mp3](./testResults/en-test.mp3)
+- [es-test.mp3](./testResults/es-Original-Audio.mp3)
+- [fr-test.mp3](./testResults/fr-test.mp3)
+- [hi-test.mp3](./testResults/hi-test.mp3)
+- [hu-test.mp3](./testResults/hu-test.mp3)
+- [it-test.mp3](./testResults/it-test.mp3)
+- [jp-test.mp3](./testResults/jp-test.mp3)
+- [ko-test.mp3](./testResults/ko-test.mp3)
+- [nl-test.mp3](./testResults/nl-test.mp3)
+- [pl-test.mp3](./testResults/pl-test.mp3)
+- [pt-test.mp3](./testResults/pt-test.mp3)
+- [ru-test.mp3](./testResults/ru-test.mp3)
+- [tr-test.mp3](./testResults/tr-test.mp3)
+
 ## Configuration
 
 - You can customize the translation models and other settings by modifying the script.
