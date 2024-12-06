@@ -158,7 +158,9 @@ def run_translation(translation_method, target_lang):
         target_lang = TowerInstruct_languages.get(target_lang)   
 
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(audio_path))[0]}_translated_To_{target_lang}_{translation_method}_{current_time}.mp3")
+    output_path = os.path.normpath(os.path.join(output_dir, f"{os.path.splitext(os.path.basename(audio_path))[0]}_translated_To_{target_lang}_{translation_method}_{current_time}.mp3"))
+    if not output_path.startswith(output_dir):
+        raise Exception("Invalid output path")
     input_file = audio_path
     print(audio_path)
     input_duration = get_audio_duration(input_file)
@@ -232,7 +234,9 @@ def run_translation(translation_method, target_lang):
             print(f"{e}")
             return "An Error occurred!"
 
-        Translation_chunk_output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}_Translation_chunk1.wav")
+        Translation_chunk_output_path = os.path.normpath(os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}_Translation_chunk1.wav"))
+        if not Translation_chunk_output_path.startswith(output_dir):
+            raise Exception("Invalid translation chunk output path")
 
         #add audio timing hack
         if state.value == True:
