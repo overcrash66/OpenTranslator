@@ -9,7 +9,6 @@ from OpenTranslator.translator import CustomTranslator
 import unicodedata
 import librosa
 from datetime import datetime
-import shlex
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Initialize the translator instance with an output directory
@@ -108,11 +107,11 @@ def enhance_audio(input_file, reference_file, output_file, bitrate="320k", volum
         # Build the ffmpeg command to enhance the audio
         command_enhance = [
             "ffmpeg",
-            "-i", shlex.quote(input_file),
+            "-i", (input_file),
             "-af", audio_filters,
             "-b:a", bitrate,  # High bitrate for best quality
             "-async", "1",  # Ensure timing consistency
-            shlex.quote(output_file)
+            (output_file)
         ]
         print(f"Running command to enhance audio: {' '.join(command_enhance)}")
 
