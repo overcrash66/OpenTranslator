@@ -24,7 +24,9 @@
 
 ## Demo:
 
-[![Open Translator](https://img.youtube.com/vi/GIhtXs8T8FA/0.jpg)](https://www.youtube.com/watch?v=GIhtXs8T8FA)
+[![Open Translator Intro](https://img.youtube.com/vi/GIhtXs8T8FA/0.jpg)](https://www.youtube.com/watch?v=GIhtXs8T8FA)
+
+[![Open Translator GUI demo](https://img.youtube.com/vi/_5SoStnGqIw/0.jpg)](https://www.youtube.com/watch?v=_5SoStnGqIw)
 
 ## Requirements
 
