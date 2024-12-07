@@ -22,6 +22,12 @@
 - PyTranscriber (shortcut)
 - Exit
 
+## Demo:
+
+[![Open Translator Intro](https://img.youtube.com/vi/GIhtXs8T8FA/0.jpg)](https://www.youtube.com/watch?v=GIhtXs8T8FA)
+
+[![Open Translator GUI demo](https://img.youtube.com/vi/_5SoStnGqIw/0.jpg)](https://www.youtube.com/watch?v=_5SoStnGqIw)
+
 ## Requirements
 
 Make sure you have the following dependencies installed:
@@ -100,6 +106,8 @@ python WebUI.py
 ![Redesigned (Custom)](Screenshot2.png)
 
 ![Web](Screenshot.png)
+
+![TTS](Screenshot3.png)
 
 ## Audio translation examples:
 - [ar-test.mp3](./testResults/ar-test.mp3)
