@@ -8,6 +8,7 @@ from pydub.utils import mediainfo
 from OpenTranslator.translator import CustomTranslator
 import unicodedata
 import librosa
+from datetime import datetime
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 # Initialize the translator instance with an output directory
@@ -36,34 +37,144 @@ languages = {
     "Polish": "pl"
 }
 
-language_choices = [(lang, code) for lang, code in languages.items()]
-
 # Define the translation options
-TextTranslationOption = ["Local"]
+TextTranslationOption = ["Llama2-13b","TowerInstruct-7B"]
+
+# Function to toggle button state
+def toggle_button():
+    # Access the current state without parentheses
+    if state.value:  # Current state is True
+        state.value = False  # Toggle to False
+        return "OFF"
+    else:  # Current state is False
+        state.value = True  # Toggle to True
+        return "ON"
+
+# Initial button state
+initial_state = False
+initial_label = "OFF"
 
 # Function to handle file uploads
 def upload_file(file):
     global audio_path
     audio_path = file.name
-    #return f"Selected File Title: {os.path.basename(audio_path)}"
+
+def enhance_audio(input_file, reference_file, output_file, bitrate="320k", volume_boost="10dB"):
+    """
+    Enhances the input audio and matches the timing of the reference audio file.
+    """
+    try:
+        # Verify that the input file and reference file exist
+        if not os.path.isfile(input_file):
+            raise FileNotFoundError(f"Input file not found: {input_file}")
+        if not os.path.isfile(reference_file):
+            raise FileNotFoundError(f"Reference file not found: {reference_file}")
+
+        # Extract the duration of the reference file (to match timing)
+        command_duration = [
+            "ffmpeg",
+            "-i", reference_file,
+            "-f", "null", 
+            "-"
+        ]
+        result = subprocess.run(command_duration, stderr=subprocess.PIPE, text=True)
+        duration_line = [line for line in result.stderr.splitlines() if "Duration" in line]
+        if not duration_line:
+            raise Exception("Unable to extract duration from reference file")
+        
+        duration_str = duration_line[0].split("Duration:")[1].split(",")[0].strip()
+        hours, minutes, seconds = map(float, duration_str.split(":"))
+        reference_duration = hours * 3600 + minutes * 60 + seconds  # duration in seconds
+
+        # Define filters for audio processing
+        noise_reduction_filter = "afftdn"  # Adaptive filter for noise reduction
+        normalization_filter = "loudnorm"  # EBU R128 normalization
+        dynamic_compression_filter = "acompressor"  # Dynamic range compression
+        equalizer_filter = "equalizer=f=1000:t=q:w=0.5:g=5"
+        volume_filter = f"volume={volume_boost}"
+        echo_cancellation_filter = "aecho=0.8:0.88:6:0.4"
+
+        # Combine the filters
+        audio_filters = (
+            f"{noise_reduction_filter},"
+            f"{normalization_filter},"
+            f"{dynamic_compression_filter},"
+            f"{echo_cancellation_filter},"
+            f"{equalizer_filter},"
+            f"{volume_filter}"
+        )
+
+        # Build the ffmpeg command to enhance the audio
+        command_enhance = [
+            "ffmpeg",
+            "-i", (input_file),
+            "-af", audio_filters,
+            "-b:a", bitrate,  # High bitrate for best quality
+            "-async", "1",  # Ensure timing consistency
+            (output_file)
+        ]
+        print(f"Running command to enhance audio: {' '.join(command_enhance)}")
+
+        # Execute the command to enhance the audio
+        subprocess.run(command_enhance, check=True)
+
+        tempOutputFile = str(output_file)+'_tt.mp3'
+
+        # Now, adjust the duration of the enhanced audio to match the reference file
+        command_adjust_timing = [
+            "ffmpeg",
+            "-i", output_file,
+            "-t", str(reference_duration),  # Set duration to match reference
+            "-c", "copy",  # Copy the audio codec to avoid re-encoding
+            tempOutputFile
+        ]
+        print(f"Running command to adjust timing: {' '.join(command_adjust_timing)}")
+
+        # Execute the command to adjust the duration of the enhanced audio
+        subprocess.run(command_adjust_timing, check=True)
+
+        print(f"Enhanced audio saved to {output_file}, timing matched to reference file")
+
+        # Replace the original file with the enhanced version
+        os.remove(output_file)
+        os.rename(tempOutputFile, output_file)
+
+        print(f"Replaced original file with enhanced audio: {input_file}")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error during audio enhancement: {e}")
+    except Exception as e:
+        print(f"Unexpected error: {e}")
 
 # Function to run the translation process
 def run_translation(translation_method, target_lang):
-    output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(audio_path))[0]}_translated.mp3")
+    valid_methods = ['Llama2-13b', 'TowerInstruct-7B']
+    if translation_method not in valid_methods:
+        raise ValueError(f"Invalid translation method: {translation_method}")
+    if translation_method == 'Llama2-13b':
+        target_lang = languages.get(target_lang)
+    if translation_method == 'TowerInstruct-7B':
+        target_lang = TowerInstruct_languages.get(target_lang)   
+
+    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    output_path = os.path.normpath(os.path.join(output_dir, f"{os.path.splitext(os.path.basename(audio_path))[0]}_translated_To_{target_lang}_{translation_method}_{current_time}.mp3"))
+    if not output_path.startswith(output_dir):
+        raise Exception("Invalid output path")
     input_file = audio_path
     print(audio_path)
     input_duration = get_audio_duration(input_file)
+    max_chunk_duration = 30
+    num_chunks = int(input_duration / max_chunk_duration)
     print('input_duration: '+str(input_duration))
-    if input_duration > 30:
-        max_chunk_duration = 30
-        num_chunks = int(input_duration / max_chunk_duration)
+
+    if input_duration > 30: 
+        print('Duration more then 30 sec - num_chunks: '+str(num_chunks))
         chunk_files = []
         Translation_chunk_files = []
         translated_text = []
         
         for chunk_idx in range(num_chunks):
-            print('duration more then 30- num_chunks: '+str(num_chunks))
-            print('duration more then 30- chunk_idx'+str(chunk_idx))
+            print('Current Chunk_idx'+str(chunk_idx))
             start_time = chunk_idx * max_chunk_duration
             end_time = min((chunk_idx + 1) * max_chunk_duration, input_duration)
             chunk_output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}_chunk{chunk_idx + 1}.wav")
@@ -87,11 +198,20 @@ def run_translation(translation_method, target_lang):
 
         final_output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}-temp.wav")
         
-        if translation_method == 'Local':
-            merge_audio_files(Translation_chunk_files, final_output_path)
+        merge_audio_files(Translation_chunk_files, final_output_path)
 
-        subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
-        os.remove(final_output_path)
+        if state.value == True:
+            print('Improve_Audio_Quality started ..')
+            tmp_output_file = str(output_path)+'_tmp.mp3'
+            #convert to mp3 final audio file
+            subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', tmp_output_file], check=True)
+            reference_file = input_file
+            enhance_audio(tmp_output_file, reference_file, output_path)
+            os.remove(final_output_path)
+            os.remove(tmp_output_file)
+        else:
+            subprocess.run(['ffmpeg', '-i', final_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
+            os.remove(final_output_path)  
 
         delete_chunk_files(chunk_files)
         delete_chunk_files(Translation_chunk_files)
@@ -101,11 +221,10 @@ def run_translation(translation_method, target_lang):
         translation_result = ', '.join(translated_text)
         return translation_result, output_path
 
-    if input_duration <= 30 and translation_method == 'Local':
-        #translated_text = []
+    if input_duration <= 30 and num_chunks <= 1:
         chunk_output_path = input_file
-        chunk_idx = 0
-        print('duration less then 30')
+        
+        print('duration less or equal to 30 sec')
         try:
             translation_result = translator_instance.process_audio_chunk(chunk_output_path,
                                                                          target_lang,
@@ -114,12 +233,23 @@ def run_translation(translation_method, target_lang):
             print(f"{e}")
             return "An Error occurred!"
 
-        #translated_text.append(translated_text)    
-        Translation_chunk_output_path = os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}_Translation_chunk1.wav")
+        Translation_chunk_output_path = os.path.normpath(os.path.join(output_dir, f"{os.path.splitext(os.path.basename(output_path))[0]}_Translation_chunk1.wav"))
+        if not Translation_chunk_output_path.startswith(output_dir):
+            raise Exception("Invalid translation chunk output path")
 
-        subprocess.run(['ffmpeg', '-i', Translation_chunk_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
-        os.remove(Translation_chunk_output_path)
-        
+        #add audio timing hack
+        if state.value == True:
+            tmp_output_file = str(output_path)+'_tmp.mp3'
+            subprocess.run(['ffmpeg', '-i', Translation_chunk_output_path, '-codec:a', 'libmp3lame', tmp_output_file], check=True)
+            reference_file = input_file
+            enhance_audio(tmp_output_file, reference_file, output_path)
+            os.remove(Translation_chunk_output_path)
+            os.remove(tmp_output_file)
+
+        else:
+            subprocess.run(['ffmpeg', '-i', Translation_chunk_output_path, '-codec:a', 'libmp3lame', output_path], check=True)
+            os.remove(Translation_chunk_output_path)       
+
         return translation_result, output_path
 
 # Function to split audio into a chunk using ffmpeg
@@ -159,31 +289,73 @@ def delete_chunk_files(files):
 def upload_audio(audio_file):
     return audio_file
 
+TowerInstruct_languages = {
+    "English": "en",
+    "Spanish": "es",
+    "French": "fr",
+    "German": "de",
+    "Korean": "ko",
+    "Russian": "ru",
+    "Italian": "it",
+    "Portuguese": "pt",
+    "Chinese (Mandarin)": "zh",
+    "Dutch": "nl"
+}
+
+model_languages = {
+    "Llama2-13b": list(languages.keys()),
+    "TowerInstruct-7B": list(TowerInstruct_languages.keys())
+}
+
+def update_languages(selected_model):
+    supported_languages = model_languages[selected_model]
+    return gr.update(choices=supported_languages, value=supported_languages[0])
+
 # Define the Gradio interface
 with gr.Blocks() as demo:
-    gr.Markdown("# Open Translator")
+    demo.clear()
+    gr.Markdown("# Open Translator WebUi")
 
     with gr.Row():
         with gr.Column():
-            #gr.Markdown("## Select Translation Method:")
-            translation_method = gr.Dropdown(choices=TextTranslationOption, value=TextTranslationOption[0], label="Translation Method")
+            translation_method = gr.Dropdown(choices=TextTranslationOption, value=TextTranslationOption[0], label="Translation Method") 
 
             gr.Markdown("## Select Audio File:")
-            audio_file = gr.File(type="filepath", label="Upload Audio File")
+            audio_file = gr.File(type="filepath", label="Select The Audio File")
             audio_player = gr.Audio(label="Audio Player", interactive=True)          
 
-            #file_title = gr.Textbox(label="Selected File Title")
             audio_file.upload(upload_file, audio_file)
             audio_file.change(upload_audio, audio_file, audio_player)
 
-            gr.Markdown("## Select Target Language:")
-            target_lang = gr.Dropdown(choices=language_choices, value="ar", label="Target Language")
-            #print(target_lang)
-            translate_button = gr.Button("translate")
+            gr.Markdown("## Optimize Output Audio file Quality:")
+            state = gr.State(value=initial_state)  # Internal state to track the toggle
+            button = gr.Button(initial_label)
+
+            # Set up button click behavior
+            button.click(
+                toggle_button,
+                outputs=[button]
+            )
+
+            gr.Markdown("## Select Language:")
+            target_lang = gr.Dropdown(
+                choices=model_languages["Llama2-13b"], 
+                value=model_languages["Llama2-13b"][0], 
+                label="Translate To"
+            )
+            
+            translation_method.change(
+                update_languages, 
+                inputs=translation_method, 
+                outputs=target_lang
+            )
+
+            translate_button = gr.Button("Start Translation")
 
         with gr.Column():
-            translated_text = gr.Textbox(label="Translated text", lines=20, interactive=False)
-            audio_output = gr.Audio(label="Translated Audio")
+            translated_text = gr.Textbox(label="Translated text Result", lines=20, interactive=False)
+            audio_output = gr.Audio(label="Translated Audio Result")
             translate_button.click(run_translation, inputs=[translation_method, target_lang], outputs=[translated_text, audio_output])
 
-demo.launch(server_name="127.0.0.2", server_port=7861)
+
+demo.launch(server_name="127.0.0.1", server_port=7861)
