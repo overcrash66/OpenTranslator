@@ -65,7 +65,7 @@ def tts_interface(text, reference_audio, language, speed):
 # Gradio GUI
 def main():
     # Manually specify supported languages
-    supported_languages = ["en", "es", "fr", "de", "it", "pt", "nl", "ru", "zh", "ja"]  # Add or remove languages as necessary
+    supported_languages = ["en", "es", "fr", "de", "it", "pt", "nl", "ru", "zh", "ja", "ar"]  # Add or remove languages as necessary
 
     with gr.Blocks() as demo:
         gr.Markdown("""
