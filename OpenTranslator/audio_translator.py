@@ -1,4 +1,4 @@
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
+from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 import torchaudio
 import logging
 import librosa
@@ -29,9 +29,11 @@ class CustomTranslator:
         #self.tts = None
         
     def load_models(self):    
-        self.processor = WhisperProcessor.from_pretrained("openai/whisper-large-v3")
-        self.model = WhisperForConditionalGeneration.from_pretrained("openai/whisper-large-v3").to(device)
-        #self.tts = TTS("tts_models/multilingual/multi-dataset/xtts_v2").to(device)
+        self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+        model_id = "distil-whisper/distil-large-v3"
+        self.processor =  AutoProcessor.from_pretrained(model_id)
+        self.model = AutoModelForSpeechSeq2Seq.from_pretrained(model_id, torch_dtype=self.torch_dtype, low_cpu_mem_usage=True, use_safetensors=True)
+        self.model.to(device)
  
     def process_audio_chunk(self, input_path, target_language,src_lang, chunk_idx, output_path, Target_Text_Translation_Option):
         try:
@@ -81,9 +83,9 @@ class CustomTranslator:
 
                 # Process the input audio with the processor
                 input_features = self.processor(input_waveform.numpy(), sampling_rate=16000, return_tensors="pt")
-
-                # Move input features to the device used by the model
-                input_features = {k: v.to(device) for k, v in input_features.items()}
+                
+                # Move input features to the device and convert to the same dtype as the model
+                input_features = {k: v.to(device).to(self.torch_dtype) for k, v in input_features.items()}
 
                 # Generate token ids
                 predicted_ids = self.model.generate(input_features["input_features"], forced_decoder_ids=forced_decoder_ids)

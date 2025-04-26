@@ -312,7 +312,7 @@ class TranslatorGUI:
 		webbrowser.open("https://github.com/overcrash66/OpenTranslator")
 
 	def show_about(self):
-		msg = CTkMessagebox(title="About",message = "Open Translator v1.0.1\n\nCreated by Wael Sahli\n\n",option_1="Visite our website",option_2="Close")	
+		msg = CTkMessagebox(title="About",message = "Open Translator v1.0.2\n\nCreated by Wael Sahli\n\n",option_1="Visite our website",option_2="Close")	
 		if msg.get()=='Visite our website':
 			self.open_link()
 	
