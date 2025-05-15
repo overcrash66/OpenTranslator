@@ -146,8 +146,9 @@ class CustomTranslator:
             
             self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)
             
-            return translated_text
             self.unload_whisper_model()
+            return translated_text
+            
 
         except Exception as e:
             logging.error(f"Error processing audio: {e}")
