@@ -147,11 +147,11 @@ class CustomTranslator:
             self.generate_audio(translated_text, Translation_chunk_output_path, target_language, input_path)
             
             return translated_text
-            self.unload_whisper_model()
-
         except Exception as e:
             logging.error(f"Error processing audio: {e}")
             return "An Error occurred!", None
+        finally:
+            self.unload_whisper_model()    
 
     def validate_translation(self, source_text, target_language):
         print('validate_translation started ..')
@@ -174,7 +174,7 @@ class CustomTranslator:
         target_language = code_to_language.get(target_language, "Unknown language")
         
         #supports 10 languages: English, German, French, Spanish, Chinese, Portuguese, Italian, Russian, Korean, and Dutch
-        pipe = pipeline("text-generation", model="Unbabel/TowerInstruct-7B-v0.2", torch_dtype=torch.bfloat16, device_map=device)
+        pipe = pipeline("text-generation", model="Unbabel/TowerInstruct-7B-v0.2", torch_dtype=torch.bfloat16, device=device)
         # We use the tokenizer’s chat template to format each message - see https://huggingface.co/docs/transformers/main/en/chat_templating
         messages = [
             {

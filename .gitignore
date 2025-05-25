@@ -1,2 +1,4 @@
 venv/
 .env/
+OpenTranslator/__pycache__/__init__.cpython-310.pyc
+OpenTranslator/__pycache__/translator.cpython-310.pyc
