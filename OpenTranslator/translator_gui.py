@@ -57,7 +57,16 @@ class TranslatorGUI:
 		self.target_TextTranslationOption_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarTextTranslationOption,values=TextTranslationOption)
 		self.target_TextTranslationOption_dropdown.pack(pady=5)
 		self.target_TextTranslationOption_dropdown.set(TextTranslationOption[0])
+		self.target_TextTranslationOption_dropdown.set(TextTranslationOption[0])
 		self.stringvarTextTranslationOption.trace('w', self.Update_Gui) 
+
+		self.label_local_model = customtkinter.CTkLabel(pack_frame, text="Select Local Model:", font=("Arial", 12, "bold"), text_color="green")
+		self.label_local_model.pack(pady=5)
+		LocalModels = ["HY-MT1.5-1.8B", "HY-MT1.5-7B", "Llama2-13b"]
+		self.stringvarLocalModel = customtkinter.StringVar()
+		self.local_model_dropdown = customtkinter.CTkOptionMenu(pack_frame, variable=self.stringvarLocalModel, values=LocalModels)
+		self.local_model_dropdown.pack(pady=5)
+		self.local_model_dropdown.set(LocalModels[0]) 
 
 		self.label_source_AudioFileLang = customtkinter.CTkLabel(pack_frame, text="For online or Hybrid Translation:\n Select Source Audio file Language:",fg_color="#222121",text_color='#222121', font=("Arial", 12, "bold"))
 		self.label_source_AudioFileLang.pack(pady=5)
@@ -176,6 +185,13 @@ class TranslatorGUI:
 		else:
 			self.source_AudioFileLang_dropdown.configure(fg_color="#222121",text_color='#222121')
 			self.label_source_AudioFileLang.configure(fg_color="#222121",text_color='#222121')
+		
+		if self.target_TextTranslationOption_dropdown.get() == 'Local':
+			self.local_model_dropdown.configure(state="normal", fg_color="#2B7FA3")
+			self.label_local_model.configure(text_color="green")
+		else:
+			self.local_model_dropdown.configure(state="disabled", fg_color="#222121")
+			self.label_local_model.configure(text_color="gray")
 
 	def switch_event(self):
 		print("switch toggled, current value:", self.switch_var.get())		
@@ -184,7 +200,7 @@ class TranslatorGUI:
 		if self.audio_path:
 			output_path = filedialog.asksaveasfilename(defaultextension=".mp3", filetypes=[("MP3 Files", "*.mp3")])
 			if output_path:
-				translation_thread = threading.Thread(target=self.run_translation, args=(output_path,))
+				translation_thread = threading.Thread(target=self.run_translation, args=(output_path, self.stringvarLocalModel.get()))
 				translation_thread.start()
 				#self.progress_bar.start()
 				self.label_status.configure(text="Translation in progress...",font=("Arial", 16, "bold"),text_color="red")	 
@@ -337,7 +353,7 @@ class TranslatorGUI:
 		#self.clear_button.configure(fg_color="#222121",text_color='#222121')
 		#self.stop_button.configure(fg_color="#222121",text_color='#222121')
 	
-	def run_translation(self, output_path):
+	def run_translation(self, output_path, local_model_name="Llama2-13b"):
 		input_file = self.audio_path
 		self.save_button.configure(fg_color="#222121",text_color='#222121')
 		self.clear_button.configure(fg_color="#222121",text_color='#222121')
@@ -386,20 +402,21 @@ class TranslatorGUI:
 				try:
 					translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
 																 self.languages[self.stringvarlanguage.get()],self.Src_lang[self.stringvarsource_AudioFileLang.get()],
-																 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
+																 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get(), local_model_name)
+					
+					chunk_files.append(chunk_output_path)
+				
+					self.text_translated.configure(state='normal')
+					self.text_translated.insert('end', f"{translation_result}\n\n")
+					self.text_translated.configure(state='disabled')
+
+					Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
+					Translation_chunk_files.append(Translation_chunk_output_path)
 				except Exception as e:
 					print(f"{e}")
 					#self.progress_bar.stop()
 					self.label_status.configure(text="An Error occurred!",font=("Arial", 16, "bold"),text_color="red")
-				
-				chunk_files.append(chunk_output_path)
-				
-				self.text_translated.configure(state='normal')
-				self.text_translated.insert('end', f"{translation_result}\n\n")
-				self.text_translated.configure(state='disabled')
-
-				Translation_chunk_output_path = f"{output_path}_Translation_chunk{chunk_idx + 1}.wav"
-				Translation_chunk_files.append(Translation_chunk_output_path)
+					return # Stop processing on error
 			
 
 			# Merge individual chunk files into the final output file
@@ -446,7 +463,7 @@ class TranslatorGUI:
 			try:
 				translation_result = self.translator_instance.process_audio_chunk(chunk_output_path,
 															 self.languages[self.stringvarlanguage.get()],self.Src_lang[self.stringvarsource_AudioFileLang.get()],
-															 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get())											 
+															 chunk_idx, output_path,self.target_TextTranslationOption_dropdown.get(), local_model_name)											 
 			except Exception as e:
 				print(f"{e}")
 				#self.progress_bar.stop()

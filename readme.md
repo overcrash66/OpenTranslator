@@ -7,7 +7,9 @@
 
 - Translate from and to 17 Languages :
 
-   - The translator supports various languages, including English, Spanish, French, German, Dutch , Japanese, Korean, Turkish, Arabic, Russian, Hebrew, Hindi, Italian, Portuguese, Chinese, Czech and Hungarian.
+   - **New**: Supports **Tencent HY-MT1.5-7B** and **HY-MT1.5-1.8B** models for high-quality local translation (multilingual).
+   - **New**: **Edge-TTS** integration for high-quality neural text-to-speech (Microsoft voices).
+   - **Compatibility**: Includes built-in patches for **PyTorch Nightly (2.5+)** & **CUDA 12.8** compatibility, ensuring stability on **RTX 50-series** GPUs.
 
 ## Options
 
@@ -74,12 +76,17 @@ PY -3.12
 pip install torch==2.2.1+cu118 torchaudio==2.2.1+cu118 --index-url https://download.pytorch.org/whl/cu118
 ```
 
+For **NVIDIA RTX 5060 Ti (sm_120) / Blackwell Architecture**:
+```bash
+pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128
+```
+
 Install mecab 
 https://github.com/ikegami-yukino/mecab/releases
 
 
 ```bash
-pip install -r requirements_Py312.txt
+pip install -r requirements.txt
 ```
 
 OR by default you use CPU only:
@@ -93,6 +100,12 @@ pip install -r requirements.txt
 ```bash
 python OpenTranslator.py
 ```
+- Select **Translation Method**: "Local"
+- Select **Local Model**: 
+  - "Llama2-13b" (MBart - legacy)
+  - "HY-MT1.5-7B" (Tencent - best quality, requires more VRAM)
+  - "HY-MT1.5-1.8B" (Tencent - faster, lower VRAM requirements)
+
 
 Or Local mode (using a set of LLM's) for audio file translation only, using a WEB UI (Gradio)
 
@@ -140,7 +153,10 @@ This project is licensed under the GPL License - see the [LICENSE](LICENSE) file
 
 Special thanks to:
 [XTTS_V2](https://huggingface.co/coqui/XTTS-v2)
+[Edge-TTS](https://github.com/rany2/edge-tts)
 [whisper v3 Large](https://huggingface.co/openai/whisper-large-v3)
 [Llama2-13b-Language-translate](https://huggingface.co/SnypzZz/Llama2-13b-Language-translate)
+[Tencent HY-MT1.5-7B](https://huggingface.co/tencent/HY-MT1.5-7B)
+[Tencent HY-MT1.5-1.8B](https://huggingface.co/tencent/HY-MT1.5-1.8B)
 [autosub](https://github.com/agermanidis/autosub)
 [gTTS](https://github.com/pndurette/gTTS)
