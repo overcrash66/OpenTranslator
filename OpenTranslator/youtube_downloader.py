@@ -54,7 +54,8 @@ class YouTubeDownloader:
             # Using yt-dlp to download the video
             result = subprocess.run([
                 'yt-dlp',
-                '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
+                '-f', 'bestvideo+bestaudio/best',
+                '--merge-output-format', 'mp4',
                 '-o', f'{output_path}/%(title)s.%(ext)s',
                 url
             ], check=True)

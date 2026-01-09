@@ -1,20 +1,46 @@
+# Core
+python-dateutil
+requests
 sounddevice
-transformers
-mecab-python3
-coqui-tts
-torchaudio
-Pillow
-pydub
-yt-dlp
+numpy>=2.0.0
+scipy>=1.15.0
+pandas>=2.3.3
+scikit-learn>=1.7.2
+
+# Machine Learning / Deep Learning
+transformers>=4.57.3
+accelerate>=1.12.0
+optimum>=2.1.0
+torchaudio  # Note: Install via specific command for specific CUDA version
+torch  # Note: Install via specific command for specific CUDA version
+torchvision  # Note: Install via specific command for specific CUDA version
+
+# Audio Processing
 librosa
+pydub
+gTTS
+coqui-tts>=0.22.0
+edge-tts>=7.0.0
+spacy>=3.8.0
+thinc>=8.3.0
+mecab-python3
+soundfile
+
+# UI
 customtkinter
 CTkMessagebox
-httpx
 CTkMenuBar
+gradio
+
+# Utilities
+Pillow
+yt-dlp
+httpx
 sentencepiece
 cutlet
 mecab
 unidic-lite
 google-api-python-client
-gtts
-gradio
+ffmpy
+six
+tqdm

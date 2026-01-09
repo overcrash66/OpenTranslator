@@ -2,3 +2,8 @@ venv/
 .env/
 OpenTranslator/__pycache__/__init__.cpython-310.pyc
 OpenTranslator/__pycache__/translator.cpython-310.pyc
+/autosub/__pycache__
+/OpenTranslator/__pycache__
+*.mp4
+*.ytdl
+*.part
