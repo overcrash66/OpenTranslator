@@ -149,7 +149,7 @@ safetensors==0.5.3
 scikit-learn==1.7.2
 scipy==1.15.3
 semantic-version==2.10.0
-sentencepiece==0.2.0
+sentencepiece==0.2.1
 shellingham==1.5.4
 six==1.17.0
 smart-open==7.1.0
