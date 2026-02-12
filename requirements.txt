@@ -115,7 +115,7 @@ optimum==2.1.0
 orjson==3.10.16
 packaging==25.0
 pandas==2.3.3
-pillow==12.0.0
+pillow==12.1.1
 platformdirs==4.3.7
 pooch==1.8.2
 preshed==3.0.9
