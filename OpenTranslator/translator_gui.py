@@ -14,7 +14,9 @@ from .audio_translator import CustomTranslator
 from .VoiceRecorder import AudioRecorderGUI
 import webbrowser
 import ctypes
-ctypes.windll.user32.SetProcessDPIAware()
+import sys
+if sys.platform == "win32":
+    ctypes.windll.user32.SetProcessDPIAware()
 
 customtkinter.set_appearance_mode("System")	   # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
@@ -113,7 +115,7 @@ class TranslatorGUI:
 			"Turkish": "tr",
 			"Arabic": "ar",
 			"Russian": "ru",
-			"Hebrew": "hu",
+			"Hebrew": "he",
 			"Hindi": "hi",
 			"Italian": "it",
 			"Portuguese": "pt",
@@ -167,7 +169,7 @@ class TranslatorGUI:
 	def showErrorIfUserUseLocalTranslationAndSelectSourceLanguage(self,a,b,c):
 		if self.target_TextTranslationOption_dropdown.get() == 'Local':
 			#CTkMessagebox(title="Error", message="With Local Translation: \n You don't need to select audio file Srource Language", icon="cancel")
-			messagebox.showerror("Error", "With Local Translation: \n You don't need to select audio file Srource Language")
+			messagebox.showerror("Error", "With Local Translation: \n You don't need to select audio file Source Language")
 
 	def Update_Gui(self,local,online,hybrid):
 		if self.target_TextTranslationOption_dropdown.get() != 'Local':
@@ -260,9 +262,16 @@ class TranslatorGUI:
 
 	def PyTranscriber(self):
 		def RunPyTranscriber():
-			pytranscriber_path = r'C:\Program Files (x86)\pyTranscriber\pyTranscriber.exe'
+			import shutil
+			pytranscriber_path = shutil.which("pyTranscriber")
+			if not pytranscriber_path:
+				# Fallback to common default path
+				default_path = r'C:\Program Files (x86)\pyTranscriber\pyTranscriber.exe'
+				if os.path.exists(default_path):
+					pytranscriber_path = default_path
+
 			# Check if pyTranscriber exists
-			if os.path.exists(pytranscriber_path):
+			if pytranscriber_path and os.path.exists(pytranscriber_path):
 				subprocess.run([pytranscriber_path])
 			else:
 				# Show message box to install pyTranscriber
@@ -478,7 +487,7 @@ class TranslatorGUI:
 			self.save_button.configure(fg_color="#2B7FA3",text_color='white')
 			self.clear_button.configure(fg_color="#2B7FA3",text_color='white')		
 		
-		if input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Online' or input_duration <= 30 and self.target_TextTranslationOption_dropdown.get() == 'Hybrid':
+		if input_duration <= 30 and (self.target_TextTranslationOption_dropdown.get() == 'Online' or self.target_TextTranslationOption_dropdown.get() == 'Hybrid'):
 			#self.progress_bar.stop()
 			print('For online translation: you need to use an audio file longer then 30 sec !')	
 			messagebox.showerror("Error", f"For online translation: you need to use an audio file longer then 30 sec !")

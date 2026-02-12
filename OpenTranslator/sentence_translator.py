@@ -1,5 +1,6 @@
 import requests
 import httpx
+import time
 
 class SentenceTranslator:
 	def __init__(self, src, dst, patience=-1, timeout=60, error_messages_callback=None):

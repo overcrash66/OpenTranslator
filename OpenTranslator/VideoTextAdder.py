@@ -5,7 +5,9 @@ import json
 import threading
 import customtkinter
 import ctypes
-ctypes.windll.user32.SetProcessDPIAware()
+import sys
+if sys.platform == "win32":
+    ctypes.windll.user32.SetProcessDPIAware()
 customtkinter.set_appearance_mode("System")    # Modes: system (default), light, dark
 customtkinter.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
@@ -53,7 +55,7 @@ class VideoTextAdder:
             command = [
                 'ffmpeg',
                 '-i', input_video,
-                '-vf', f"drawtext=text='{text}':x=(w-tw-10):y=10:fontsize={font_size}:fontcolor={text_color}:fontfile=/path/to/font/{font_style}.ttf",
+                '-vf', f"drawtext=text='{text}':x=(w-tw-10):y=10:fontsize={font_size}:fontcolor={text_color}",
                 '-c:a', 'copy',
                 output_video
             ]

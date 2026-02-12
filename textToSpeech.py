@@ -181,7 +181,7 @@ def tts_interface(text, reference_audio, language, speed):
         audio = AudioSegment.from_file(audio_path)
         if len(audio) > 600 * 1000:  # 10 minutes
             return "Error: Audio exceeds 10 minute limit"
-    except:
+    except Exception:
         return "Error: Invalid reference audio format"
 
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

@@ -287,16 +287,16 @@ def generate_subtitles( # pylint: disable=too-many-locals,too-many-arguments
             extracted_regions = []
             for i, extracted_region in enumerate(pool.imap(converter, regions)):
                 extracted_regions.append(extracted_region)
-                pbar.update(i)
-            pbar.finish()
+                #pbar.update(i)
+            #pbar.finish()
 
             widgets = ["Performing speech recognition: ", Percentage(), ' ', Bar(), ' ', ETA()]
             pbar = ProgressBar(widgets=widgets, maxval=len(regions)).start()
 
             for i, transcript in enumerate(pool.imap(recognizer, extracted_regions)):
                 transcripts.append(transcript)
-                pbar.update(i)
-            pbar.finish()
+                #pbar.update(i)
+            #pbar.finish()
 
             if src_language.split("-")[0] != dst_language.split("-")[0]:
                 if api_key:
@@ -310,8 +310,8 @@ def generate_subtitles( # pylint: disable=too-many-locals,too-many-arguments
                     translated_transcripts = []
                     for i, transcript in enumerate(pool.imap(translator, transcripts)):
                         translated_transcripts.append(transcript)
-                        pbar.update(i)
-                    pbar.finish()
+                        #pbar.update(i)
+                    #pbar.finish()
                     transcripts = translated_transcripts
                 else:
                     print(
@@ -321,7 +321,7 @@ def generate_subtitles( # pylint: disable=too-many-locals,too-many-arguments
                     return 1
 
         except KeyboardInterrupt:
-            pbar.finish()
+            #pbar.finish()
             pool.terminate()
             pool.join()
             print("Cancelling transcription")

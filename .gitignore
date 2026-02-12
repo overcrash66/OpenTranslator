@@ -1,9 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
 venv/
 .env/
-OpenTranslator/__pycache__/__init__.cpython-310.pyc
-OpenTranslator/__pycache__/translator.cpython-310.pyc
+env/
+
+# IDE
+.vs/
+.vscode/
+.idea/
+
+# Media artifacts
 *.mp4
-/autosub/__pycache__
-/OpenTranslator/__pycache__
 *.part
 *.ytdl
+*.mp3
+*.wav
+*.flac
+
+# Output
+output/
+testResults/
+
+# Config
+config.json

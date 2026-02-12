@@ -225,6 +225,7 @@ def run_translation(translation_method, target_lang):
         chunk_output_path = input_file
         
         print('duration less or equal to 30 sec')
+        chunk_idx = 0
         try:
             translation_result = translator_instance.process_audio_chunk(chunk_output_path,
                                                                          target_lang,

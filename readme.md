@@ -78,8 +78,7 @@ Install mecab
 https://github.com/ikegami-yukino/mecab/releases
 
 
-```bash
-pip install -r requirements_Py312.txt
+pip install -r requirements.txt
 ```
 
 OR by default you use CPU only:

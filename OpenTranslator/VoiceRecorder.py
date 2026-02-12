@@ -44,9 +44,8 @@ class AudioRecorderGUI:
     def stop(self):
         self.stop_button.configure(state="disabled")
         self.record_button.configure(state="normal")
-        write('output.wav', fs, self.myrecording)  # Save as WAV file 
-
         spd.stop()
+        write('output.wav', fs, self.myrecording)  # Save as WAV file
 
         mp3_output_file = simpledialog.askstring("Output File Name", "Enter the name of the output MP3 file:")
         mp3_output_file = str(mp3_output_file)+'.mp3'

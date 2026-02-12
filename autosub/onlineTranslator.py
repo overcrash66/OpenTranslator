@@ -108,15 +108,25 @@ class Ctr_Autosub():
                 raise
         
          
-        return transcripts
+        if Ctr_Autosub.cancel:
+            return -1
 
-        os.remove(audio_filename)
+        try:
+            os.remove(audio_filename)
+        except OSError:
+            pass
+            
         tempfilename = str(source_path)+'.wav.flac'
-        os.remove(tempfilename)
+        try:
+            if os.path.exists(tempfilename):
+                os.remove(tempfilename)
+        except OSError:
+            pass
+
         if Ctr_Autosub.cancel:
             return -1
         else:
             Ctr_Autosub.pool.close()
             Ctr_Autosub.pool.join()
 
-        return dest
+        return transcripts
