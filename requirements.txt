@@ -92,7 +92,7 @@ lazy_loader==0.4
 librosa==0.10.0
 llvmlite==0.46.0
 marisa-trie==1.2.1
-Markdown==3.8
+Markdown==3.8.1
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
 matplotlib==3.8.4
